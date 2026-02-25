@@ -1,0 +1,160 @@
+/* Fashion Homepage Slider Styles */
+.fashion-slider {
+	background: #c2b1a0;
+	min-height: 480px;
+	display: flex;
+	align-items: center;
+	position: relative;
+	overflow: hidden;
+	border-radius: 16px;
+	margin-bottom: 2.5rem;
+}
+.fashion-slider-content {
+	flex: 1;
+	padding: 3rem 2rem 3rem 4rem;
+	color: #222;
+}
+.fashion-slider-label {
+	color: #bfa58a;
+	font-weight: 700;
+	letter-spacing: 2px;
+	font-size: 1.1rem;
+	margin-bottom: 1.5rem;
+	display: block;
+}
+.fashion-slider-title {
+	font-size: 2.8rem;
+	font-weight: 800;
+	line-height: 1.1;
+	margin-bottom: 2.5rem;
+	color: #222;
+}
+.fashion-slider-btns {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+.fashion-slider-price {
+	background: #ff2e63;
+	color: #fff;
+	border: none;
+	border-radius: 2rem;
+	font-size: 1.2rem;
+	font-weight: 700;
+	padding: 0.7rem 2.2rem;
+	margin-right: 0.5rem;
+}
+.fashion-slider-buy {
+	background: #ff2e63;
+	color: #fff;
+	border: none;
+	border-radius: 2rem;
+	font-size: 1.1rem;
+	font-weight: 600;
+	padding: 0.7rem 2.2rem;
+	transition: background 0.2s;
+}
+.fashion-slider-buy:hover {
+	background: #d72653;
+}
+.fashion-slider-image {
+	flex: 1;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	min-width: 320px;
+}
+.fashion-slider-image img {
+	max-height: 420px;
+	object-fit: contain;
+}
+.fashion-slider-nav {
+	position: absolute;
+	bottom: 2rem;
+	right: 3rem;
+	font-size: 1.3rem;
+	color: #ff2e63;
+	font-weight: 700;
+	letter-spacing: 2px;
+}
+.fashion-slider-dots {
+	position: absolute;
+	left: 3rem;
+	bottom: 2rem;
+	display: flex;
+	gap: 0.5rem;
+}
+.fashion-slider-dot {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: #fff;
+	opacity: 0.5;
+	border: none;
+	transition: opacity 0.2s, background 0.2s;
+	cursor: pointer;
+}
+.fashion-slider-dot.active {
+	background: #ff2e63;
+	opacity: 1;
+}
+/* App-specific styles */
+
+/* Highlight for product name in detail page */
+.product-name-highlight {
+	color: #ff8533 !important;
+	font-weight: 700;
+}
+.black-font {
+	color: #111 !important;
+}
+
+.option-btn {
+	background: #fff;
+	color: #111;
+	border: 1.5px solid #bbb;
+	border-radius: 6px;
+	padding: 0.35em 1.1em;
+	font-weight: 600;
+	font-size: 1rem;
+	transition: all 0.15s;
+	cursor: pointer;
+}
+.option-btn.active, .option-btn:focus {
+	background: #111;
+	color: #fff;
+	border-color: #111;
+	outline: none;
+}
+.option-btn.opacity-50 {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.quantity-selector {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	background: #fff;
+	border-radius: 6px;
+	padding: 0.25em 1em;
+	width: fit-content;
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+.quantity-selector button {
+	background: none;
+	border: none;
+	color: #111;
+	font-size: 1.2em;
+	padding: 0 0.5em;
+	cursor: pointer;
+	transition: color 0.15s;
+}
+.quantity-selector button:active {
+	color: #ff8533;
+}
+.quantity-selector span {
+	min-width: 2em;
+	text-align: center;
+}
