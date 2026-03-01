@@ -27,7 +27,8 @@
 	font-weight: 800;
 	line-height: 1.1;
 	margin-bottom: 2.5rem;
-	color: #222;
+	color: #1a237e; /* Deep blue */
+	font-family: 'Montserrat', sans-serif;
 }
 .fashion-slider-btns {
 	display: flex;
@@ -35,17 +36,18 @@
 	margin-bottom: 2rem;
 }
 .fashion-slider-price {
-	background: #ff2e63;
-	color: #fff;
+	background: #ffd600; /* Bright yellow */
+	color: #222;
 	border: none;
 	border-radius: 2rem;
 	font-size: 1.2rem;
 	font-weight: 700;
 	padding: 0.7rem 2.2rem;
 	margin-right: 0.5rem;
+	font-family: 'Montserrat', sans-serif;
 }
 .fashion-slider-buy {
-	background: #ff2e63;
+	background: #1a237e; /* Deep blue */
 	color: #fff;
 	border: none;
 	border-radius: 2rem;
@@ -53,9 +55,10 @@
 	font-weight: 600;
 	padding: 0.7rem 2.2rem;
 	transition: background 0.2s;
+	font-family: 'Montserrat', sans-serif;
 }
 .fashion-slider-buy:hover {
-	background: #d72653;
+	background: #283593; /* Slightly lighter blue */
 }
 .fashion-slider-image {
 	flex: 1;

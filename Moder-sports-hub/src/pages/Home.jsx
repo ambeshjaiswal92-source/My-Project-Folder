@@ -2,26 +2,34 @@
 const fashionSlides = [
   {
     id: 1,
-    title: 'Denim Longline\nT-Shirt Dress\nWith Split',
-    price: '$130',
-    image: 'https://img.freepik.com/premium-psd/running-shoes-sneakers-exercising-playing-sports-isolated-transparent-background_1266257-6524.jpg',
+    title: 'Puma Phase Sports Bag - Californiann',
+    price: '₹130',
+    image: 'https://www.californian.co.za/wp-content/uploads/2023/10/A1849-PUMA-BLACK-PHASE-SPORT4-1024x1024.jpg',
     bg: '#c2b1a0'
   },
   {
     id: 2,
     label: 'HOT DEAL',
-    title: 'Sports Shoes\nLimited Edition',
-    price: '$99',
-    image: 'https://tse1.mm.bing.net/th/id/OIP.RBQzOzeCj_SCSb1MAizonwHaHw?rs=1&pid=ImgDetMain&o=7&rm=3',
+    title: 'Nike Run Division Miler Mens Flash Running Jacket. Nike SG',
+    price: '₹99',
+    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/dfd51767-5abf-4e76-b94e-83a2fb7556c0/run-division-miler-flash-running-jacket-vNGRMq.png',
     bg: '#e0e0e0'
   },
   {
     id: 3,
     label: 'TRENDING',
     title: 'Cricket Bat\nPro Series',
-    price: '$150',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+    price: '₹150',
+    image: 'https://www.romida.co.uk/wp-content/uploads/2024/12/Kookaburra-Rapid-Pro-Bat-2025-Art.jpg',
     bg: '#d1c4e9'
+  },
+   {
+    id: 2,
+    label: 'HOT DEAL',
+    title: 'Sports Shoes\nLimited Edition',
+    price: '₹99',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.RBQzOzeCj_SCSb1MAizonwHaHw?rs=1&pid=ImgDetMain&o=7&rm=3',
+    bg: '#e0e0e0'
   }
 ];
 import { Link } from 'react-router-dom'
@@ -36,6 +44,14 @@ function Home({ onAddToCart, wishlist, onToggleWishlist }) {
   // Fashion slider state
   const [fashionIndex, setFashionIndex] = useState(0);
   const fashion = fashionSlides[fashionIndex];
+
+  // Auto-slide effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFashionIndex((prev) => (prev + 1) % fashionSlides.length);
+    }, 3500); // Slide every 3.5 seconds
+    return () => clearInterval(interval);
+  }, [fashionSlides.length]);
 
   // Products state
   const { getActiveProducts } = useProducts();

@@ -90,7 +90,7 @@ function AdminLogin({ onAdminLogin }) {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="admin@moder.com"
+                    placeholder="admin@modersports.com"
                     required
                   />
                 </div>
@@ -137,7 +137,7 @@ function AdminLogin({ onAdminLogin }) {
 
             <div className="bg-dark rounded p-3 text-center">
               <p className="text-muted-custom small mb-1">Demo credentials:</p>
-              <code className="text-warning">admin@moder.com / admin123</code>
+              <code className="text-warning">admin@modersports.com / admin123</code>
             </div>
           </div>
         </div>
