@@ -60,7 +60,7 @@ function App() {
       return null
     }
   })
-  const [admin, setAdmin] = useState(null)
+  const [admin, setAdmin] = useState(null);
   const [cart, setCart] = useState([])
   const [wishlist, setWishlist] = useState([])
   const [lastOrder, setLastOrder] = useState(null)
@@ -291,11 +291,11 @@ function App() {
         />
         <Route
           path="/profile"
-          element={user ? <UserProfile userId={user._id} token={user.token} /> : <Navigate to="/login" replace />}
+          element={user ? <UserProfile userId={user.id || user._id} token={user.token} onLogout={handleLogout} /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/admin-login"
-          element={<AdminLogin onAdminLogin={handleAdminLogin} />}
+          element={admin ? <Navigate to="/admin" replace /> : <AdminLogin onAdminLogin={handleAdminLogin} />}
         />
         <Route
           path="/admin/*"

@@ -15,18 +15,18 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
 
   const categories = useMemo(() => {
     const base = [
-      'All',
       'Wear',        // Clothing items
       'Footwear',    // Shoes, sneakers
       'Equipment',   // Sports gear
       'Accessories', // Small items
-      'Wearable',    // Smart devices
-      'Gear',        // Bags, packs
     ]
+    const excludeCategories = ['Wearable', 'Gear', 'Performance Wear', 'All']
     const set = new Set(base)
     products.forEach((p) => {
       const name = (p.category || p.tag || 'Featured').trim() || 'Featured'
-      set.add(name)
+      if (!excludeCategories.includes(name)) {
+        set.add(name)
+      }
     })
     return Array.from(set)
   }, [products])
@@ -125,28 +125,23 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
         {/* Filters UI */}
         <div className="row mb-4 g-2">
           <div className="col-12">
-            <div className="d-flex flex-row flex-nowrap gap-2 align-items-center" style={{background:'#f5f7fa', padding:'8px 0'}}>
+            <div className="filter-bar-container">
               {/* Type Filter */}
-              <select className="form-select w-auto" style={{background:'#111',color:'#fff',border:'none'}} value={filterType} onChange={e => handleTypeChange(e.target.value)}>
+              <select className="filter-select" value={filterType} onChange={e => handleTypeChange(e.target.value)}>
                 <option value="all">All Types</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat.toLowerCase()}>{cat}</option>
                 ))}
               </select>
               {/* Gender Filter */}
-              <select className="form-select w-auto" style={{background:'#111',color:'#fff',border:'none'}} value={filterGender} onChange={e => setFilterGender(e.target.value)}>
+              <select className="filter-select" value={filterGender} onChange={e => setFilterGender(e.target.value)}>
                 <option value="All">All Genders</option>
                 <option value="Men">Men</option>
                 <option value="Women">Women</option>
                 <option value="Unisex">Unisex</option>
               </select>
-              {/* In Stock Only */}
-              <label className="form-check-label ms-2" style={{color:'#111',opacity:0.5}}>
-                <input type="checkbox" className="form-check-input me-1" checked={inStockOnly} onChange={e => setInStockOnly(e.target.checked)} />
-                In Stock Only
-              </label>
               {/* Sort By */}
-              <select className="form-select w-auto ms-2" style={{background:'#111',color:'#fff',border:'none'}} value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <select className="filter-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
                 <option value="featured">Featured</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
@@ -154,9 +149,9 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
                 <option value="newest">Newest</option>
               </select>
               {/* Search */}
-              <input type="text" className="form-control w-auto ms-2" style={{background:'#111',color:'#fff',border:'none'}} placeholder="Search products..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+              <input type="text" className="filter-search" placeholder="Search products..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               {/* Clear Filters */}
-              <button className="btn btn-link ms-2" style={{color:'#7c8ba1'}} onClick={clearFilters}><i className="bi bi-x-lg me-1"></i>Clear</button>
+              <button className="filter-clear-btn" onClick={clearFilters}><i className="bi bi-x-lg me-1"></i>Clear</button>
             </div>
           </div>
         </div>
@@ -178,7 +173,7 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
         ) : (
           Object.entries(grouped).map(([category, items]) => (
             <div key={category} className="mb-5">
-              <h4 className="text-warning mb-3">{category}</h4>
+              <h4 className="sport-name-custom mb-3">{category}</h4>
               <div className="row g-3 g-md-4">
                 {items.map(product => (
                   <div key={product.id} className="col-6 col-md-4 col-lg-4 col-xl-3">

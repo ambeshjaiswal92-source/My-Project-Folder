@@ -4,7 +4,6 @@ import AdminOverview from './AdminOverview'
 import AdminProducts from './AdminProducts'
 import AdminOrders from './AdminOrders'
 import AdminUsers from './AdminUsers'
-import AdminSettings from './AdminSettings'
 
 function AdminDashboard({ admin, onLogout }) {
   const location = useLocation()
@@ -15,7 +14,6 @@ function AdminDashboard({ admin, onLogout }) {
     { path: '/admin/products', label: 'Products', icon: 'bi-box-seam', desc: 'Store Inventory' },
     { path: '/admin/orders', label: 'Orders', icon: 'bi-cart3', desc: 'Customer Orders' },
     { path: '/admin/users', label: 'Users', icon: 'bi-people', desc: 'Login & Accounts' },
-    { path: '/admin/settings', label: 'Settings', icon: 'bi-gear', desc: 'Configuration' },
   ]
 
   const isActive = (path) => {
@@ -93,7 +91,6 @@ function AdminDashboard({ admin, onLogout }) {
           <Route path="/products" element={<AdminProducts />} />
           <Route path="/orders" element={<AdminOrders />} />
           <Route path="/users" element={<AdminUsers />} />
-          <Route path="/settings" element={<AdminSettings admin={admin} />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </main>

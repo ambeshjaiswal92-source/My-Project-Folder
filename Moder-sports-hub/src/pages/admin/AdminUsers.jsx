@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../context/UserContext';
 import { useUsers } from '../../context/UserContext'
 import { useOrders } from '../../context/OrderContext'
@@ -53,7 +53,7 @@ const exportUsersToJSON = (users, getOrdersByEmail) => {
 }
 
 export default function AdminUsers() {
-  const { users, loading, error, getUserStats } = useUsers();
+  const { users, loading, error, getUserStats, refreshUsers } = useUsers();
   // Patch: Add updateUserStatus from UserContext
   const { updateUserStatus } = useContext(UserContext);
   const { getOrdersByEmail } = useOrders();
@@ -61,6 +61,16 @@ export default function AdminUsers() {
   const [filterStatus, setFilterStatus] = useState('All');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
+
+  // Refresh users every time component mounts or when tab becomes visible
+  useEffect(() => {
+    refreshUsers();
+    
+    // Also refresh when window/tab gets focus (user comes back to this tab)
+    const handleFocus = () => refreshUsers();
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [refreshUsers]);
 
   const safeUsers = Array.isArray(users) ? users : [];
   const filteredUsers = safeUsers.filter((user) => {

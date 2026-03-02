@@ -12,7 +12,7 @@ function OrderSuccess({ order }) {
               </div>
             </div>
 
-            <h2 className="text-white mb-3">Order Confirmed!</h2>
+            <h2 className="text-success mb-3">Order Confirmed!</h2>
 
             <p className="text-muted-custom mb-4">
               Thank you for your purchase. Your order has been placed and is being processed.
@@ -28,13 +28,13 @@ function OrderSuccess({ order }) {
                 {order.shipping?.email && (
                   <div className="d-flex justify-content-between py-2 border-bottom border-secondary">
                     <span className="text-muted-custom">Confirmation sent to</span>
-                    <span className="text-white">{order.shipping.email}</span>
+                    <span className="text-black">{order.shipping.email}</span>
                   </div>
                 )}
 
                 <div className="d-flex justify-content-between py-2">
                   <span className="text-muted-custom">Estimated delivery</span>
-                  <span className="text-white">3-5 business days</span>
+                  <span className="text-black">3-5 business days</span>
                 </div>
               </div>
             )}
@@ -46,7 +46,7 @@ function OrderSuccess({ order }) {
             </div>
 
             <div className="bg-dark rounded p-4 text-start">
-              <h6 className="text-white mb-3">
+              <h6 className="text-black mb-3">
                 <i className="bi bi-info-circle me-2 text-warning"></i>What's next?
               </h6>
               <ul className="list-unstyled text-muted-custom mb-0">

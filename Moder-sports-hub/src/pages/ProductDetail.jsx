@@ -297,7 +297,64 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
       background: '#1a1a2e',
       color: '#fff'
     })
+  }
+
+  const handleBuyNow = () => {
+    const unavailableColors = ['Yellow', 'Orange', 'Pink', 'Purple']
     
+    if (!selectedSize) {
+      Swal.fire({
+        title: 'Size Required',
+        text: 'Please select a size before proceeding',
+        icon: 'warning',
+        confirmButtonText: 'Select Size',
+        confirmButtonColor: '#667eea',
+        background: '#1a1a2e',
+        color: '#fff',
+        customClass: {
+          popup: 'border border-secondary'
+        }
+      })
+      return
+    }
+    if (!selectedColor) {
+      Swal.fire({
+        title: 'Color Required',
+        text: 'Please select a color before proceeding',
+        icon: 'warning',
+        confirmButtonText: 'Select Color',
+        confirmButtonColor: '#667eea',
+        background: '#1a1a2e',
+        color: '#fff',
+        customClass: {
+          popup: 'border border-secondary'
+        }
+      })
+      return
+    }
+    
+    if (unavailableColors.includes(selectedColor)) {
+      Swal.fire({
+        title: 'Color Not Available',
+        html: `<p style="color: #ccc;">Sorry, <strong>${selectedColor}</strong> is currently out of stock.</p><p style="color: #888;">Please select a different color.</p>`,
+        icon: 'error',
+        confirmButtonText: 'Select Another Color',
+        confirmButtonColor: '#667eea',
+        background: '#1a1a2e',
+        color: '#fff',
+        customClass: {
+          popup: 'border border-secondary'
+        }
+      })
+      return
+    }
+    
+    // Add to cart
+    for (let i = 0; i < quantity; i++) {
+      onAddToCart({ ...product, selectedSize, selectedColor })
+    }
+    
+    // Navigate to cart/payment
     navigate('/cart')
   }
 
@@ -487,7 +544,7 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
           </div>
 
           <div className="d-flex align-items-center gap-3 mb-4">
-            <span className="fs-2 fw-bold text-white">{formatPrice(product.price)}</span>
+            <span className="fs-2 fw-bold" style={{ color: '#000' }}>{formatPrice(product.price)}</span>
             {product.originalPrice && (
               <>
                 <span className="fs-5 text-decoration-line-through text-muted-custom">
@@ -661,6 +718,10 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
             <button className="btn btn-primary btn-lg" onClick={handleAddToCart}>
               <i className="bi bi-bag-plus me-2"></i>
               Add to Cart - {formatPrice(product.price * quantity)}
+            </button>
+            <button className="btn btn-warning btn-lg" onClick={handleBuyNow}>
+              <i className="bi bi-lightning-charge-fill me-2"></i>
+              Buy Now
             </button>
             <button
               className={`btn btn-ghost btn-lg ${isWishlisted ? 'text-danger' : ''}`}

@@ -32,15 +32,30 @@ function ProductCard({ product, onAddToCart, wishlist, onToggleWishlist }) {
 
           <h5 className="card-title mb-1 product-card-title black-font">{name}</h5>
 
+            {/* Rating and Review Section */}
+            <div className="product-card-rating d-flex align-items-center mb-1">
+              {/* Example: 4.5 stars, 120 reviews. Replace with real data if available */}
+              <span className="star-rating">
+                {[...Array(5)].map((_, i) => (
+                  <i
+                    key={i}
+                    className={`bi ${i < Math.floor(product.rating || 0) ? 'bi-star-fill' : (i < (product.rating || 0) ? 'bi-star-half' : 'bi-star')}`}
+                    style={{ color: '#FFD700', fontSize: '1rem', marginRight: '2px' }}
+                  />
+                ))}
+              </span>
+              <span className="ms-2 small text-muted">{product.rating?.toFixed(1) || '4.5'} ({product.reviewCount || 120} reviews)</span>
+            </div>
+
           <p className="card-text small mb-1 product-card-desc black-font">
             {description?.substring(0, 60) || 'Optimized fabrics, ergonomic cuts.'}...
           </p>
 
           <div className="d-flex justify-content-between align-items-center mt-auto pt-1 pt-md-2 border-top border-custom">
             <div>
-              <span className="price-current product-card-price black-font">{formatPrice(price)}</span>
+              <span className="price-current product-card-price price-black">{formatPrice(price)}</span>
               {originalPrice && (
-                <span className="price-original ms-1 ms-md-2 product-card-original-price black-font">{formatPrice(originalPrice)}</span>
+                <span className="price-original ms-1 ms-md-2 product-card-original-price">{formatPrice(originalPrice)}</span>
               )}
             </div>
           </div>

@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4001/api';
 
@@ -13,36 +13,51 @@ export function UserProvider({ children }) {
   const [error, setError] = useState('');
 
   // Fetch users from backend API
-  useEffect(() => {
-    async function fetchUsers() {
-      setLoading(true);
-      setError('');
-      try {
-        // Get admin token from localStorage (or your auth state)
-        let adminToken = localStorage.getItem('admin_token');
-        if (!adminToken) {
-          // Try to get token from moder_admin_user if not set directly
-          const adminUser = localStorage.getItem('moder_admin_user');
-          if (adminUser) {
-            try {
-              const parsed = JSON.parse(adminUser);
-              if (parsed.token) adminToken = parsed.token;
-            } catch {}
-          }
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      // Get admin token from localStorage (or your auth state)
+      let adminToken = localStorage.getItem('admin_token');
+      if (!adminToken) {
+        // Try to get token from moder_admin_user if not set directly
+        const adminUser = localStorage.getItem('moder_admin_user');
+        if (adminUser) {
+          try {
+            const parsed = JSON.parse(adminUser);
+            if (parsed.token) adminToken = parsed.token;
+          } catch {}
         }
-        const res = await axios.get(`${API_BASE_URL}/users`, {
-          headers: {
-            Authorization: adminToken ? `Bearer ${adminToken}` : '',
-          }
-        });
-        setUsers(res.data);
-      } catch (err) {
-        setError('Could not load users');
       }
-      setLoading(false);
+      const res = await axios.get(`${API_BASE_URL}/users`, {
+        headers: {
+          Authorization: adminToken ? `Bearer ${adminToken}` : '',
+        }
+      });
+      // Normalize user data to ensure 'id' is set (MongoDB uses _id)
+      const normalizedUsers = res.data.map(user => ({
+        ...user,
+        id: user._id || user.id,
+        orders: user.orders || 0,
+        spent: user.spent || 0,
+        joined: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A',
+        status: user.status || 'Active'
+      }));
+      setUsers(normalizedUsers);
+    } catch (err) {
+      setError('Could not load users');
     }
-    fetchUsers();
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  // Expose refreshUsers to re-fetch users list
+  const refreshUsers = useCallback(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const loginUser = (email, password) => {
     console.log('Login attempt:', email)
@@ -97,8 +112,37 @@ export function UserProvider({ children }) {
     }
   }
 
-  const updateUserStatus = (userId, newStatus) => {
-    setUsers(users.map(u => u.id === userId ? { ...u, status: newStatus } : u))
+  const updateUserStatus = async (userId, newStatus) => {
+    try {
+      // Get admin token
+      let adminToken = localStorage.getItem('admin_token');
+      if (!adminToken) {
+        const adminUser = localStorage.getItem('moder_admin_user');
+        if (adminUser) {
+          try {
+            const parsed = JSON.parse(adminUser);
+            if (parsed.token) adminToken = parsed.token;
+          } catch {}
+        }
+      }
+      
+      // Call backend API to persist the status change
+      await axios.patch(`${API_BASE_URL}/users/${userId}/status`, 
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: adminToken ? `Bearer ${adminToken}` : '',
+          }
+        }
+      );
+      
+      // Update local state using callback to avoid closure issues
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+    } catch (err) {
+      console.error('Failed to update user status:', err);
+      // Optionally refresh users to get correct state
+      fetchUsers();
+    }
   }
 
   const updateUserProfile = (userId, updates) => {
@@ -146,6 +190,7 @@ export function UserProvider({ children }) {
       getUserByEmail,
       registerUser,
       loginUser,
+      refreshUsers,
     }}>
       {children}
     </UserContext.Provider>

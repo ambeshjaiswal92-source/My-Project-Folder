@@ -114,7 +114,7 @@ function Navbar({ cartCount = 0, user, onLogout }) {
               fontSize: 'clamp(0.85rem, 3vw, 1.1rem)',
               whiteSpace: 'nowrap'
             }}>
-              Moder Sports Hub
+              Modern Sports Hub
             </span>
           </Link>
 
@@ -201,10 +201,11 @@ function Navbar({ cartCount = 0, user, onLogout }) {
                   {user.name}
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-                  <li><Link className="dropdown-item" to="/my-products">My Products</Link></li>
-                  <li><Link className="dropdown-item" to="/orders">My Orders</Link></li>
+                  <li><Link className="dropdown-item" to="/profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
+                  <li><Link className="dropdown-item" to="/my-products"><i className="bi bi-box me-2"></i>My Products</Link></li>
+                  <li><Link className="dropdown-item" to="/orders"><i className="bi bi-bag-check me-2"></i>My Orders</Link></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><button className="dropdown-item" onClick={onLogout}>Sign out</button></li>
+                  <li><button className="dropdown-item" onClick={onLogout}><i className="bi bi-box-arrow-right me-2"></i>Sign out</button></li>
                 </ul>
               </div>
             ) : (
@@ -304,13 +305,18 @@ function Navbar({ cartCount = 0, user, onLogout }) {
               <small className="text-muted">{user.email}</small>
             </div>
           </div>
-          <div className="d-flex gap-2">
-            <Link to="/my-products" className="btn btn-outline-light btn-sm flex-fill" onClick={closeSidebar}>
-              <i className="bi bi-box me-1"></i> My Products
+          <div className="d-flex flex-column gap-2">
+            <Link to="/profile" className="btn btn-warning btn-sm" onClick={closeSidebar}>
+              <i className="bi bi-person me-1"></i> My Profile
             </Link>
-            <Link to="/orders" className="btn btn-outline-light btn-sm flex-fill" onClick={closeSidebar}>
-              <i className="bi bi-receipt me-1"></i> Orders
-            </Link>
+            <div className="d-flex gap-2">
+              <Link to="/my-products" className="btn btn-outline-light btn-sm flex-fill" onClick={closeSidebar}>
+                <i className="bi bi-box me-1"></i> Products
+              </Link>
+              <Link to="/orders" className="btn btn-outline-light btn-sm flex-fill" onClick={closeSidebar}>
+                <i className="bi bi-receipt me-1"></i> Orders
+              </Link>
+            </div>
           </div>
         </div>
       ) : (
@@ -359,7 +365,7 @@ function Navbar({ cartCount = 0, user, onLogout }) {
                   className="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none"
                   onClick={closeSidebar}
                 >
-                  {sport.icon} {sport.name}
+                  {sport.icon} <span className="sport-name-custom">{sport.name}</span>
                 </Link>
               ))}
             </div>

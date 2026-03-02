@@ -3,7 +3,7 @@ const fashionSlides = [
   {
     id: 1,
     title: 'Puma Phase Sports Bag - Californiann',
-    price: '₹130',
+    price: 'Starting at the ₹130',
     image: 'https://www.californian.co.za/wp-content/uploads/2023/10/A1849-PUMA-BLACK-PHASE-SPORT4-1024x1024.jpg',
     bg: '#c2b1a0'
   },
@@ -11,7 +11,7 @@ const fashionSlides = [
     id: 2,
     label: 'HOT DEAL',
     title: 'Nike Run Division Miler Mens Flash Running Jacket. Nike SG',
-    price: '₹99',
+    price: 'Start Up to ₹99',
     image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/dfd51767-5abf-4e76-b94e-83a2fb7556c0/run-division-miler-flash-running-jacket-vNGRMq.png',
     bg: '#e0e0e0'
   },
@@ -19,7 +19,7 @@ const fashionSlides = [
     id: 3,
     label: 'TRENDING',
     title: 'Cricket Bat\nPro Series',
-    price: '₹150',
+    price: 'Discount ₹150',
     image: 'https://www.romida.co.uk/wp-content/uploads/2024/12/Kookaburra-Rapid-Pro-Bat-2025-Art.jpg',
     bg: '#d1c4e9'
   },
@@ -27,7 +27,7 @@ const fashionSlides = [
     id: 2,
     label: 'HOT DEAL',
     title: 'Sports Shoes\nLimited Edition',
-    price: '₹99',
+    price: 'Start Up to ₹99',
     image: 'https://tse1.mm.bing.net/th/id/OIP.RBQzOzeCj_SCSb1MAizonwHaHw?rs=1&pid=ImgDetMain&o=7&rm=3',
     bg: '#e0e0e0'
   }
@@ -70,7 +70,7 @@ function Home({ onAddToCart, wishlist, onToggleWishlist }) {
           </div>
           <div className="fashion-slider-btns">
             <button className="fashion-slider-price">{fashion.price}</button>
-            <button className="fashion-slider-buy">BUY NOW</button>
+           
           </div>
         </div>
         <div className="fashion-slider-image">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useOrders } from '../../context/OrderContext'
 
 const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
@@ -40,11 +40,19 @@ const exportOrdersToJSON = (orders) => {
 }
 
 function AdminOrders() {
-  const { orders, updateOrderStatus } = useOrders()
+  const { orders, updateOrderStatus, refreshOrders } = useOrders()
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('All')
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showExportMenu, setShowExportMenu] = useState(false)
+
+  // Refresh orders on mount and window focus
+  useEffect(() => {
+    refreshOrders()
+    const handleFocus = () => refreshOrders()
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [refreshOrders])
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -85,14 +93,22 @@ function AdminOrders() {
           <h2 className="text-white mb-1">Orders</h2>
           <p className="text-muted-custom mb-0">Manage and track customer orders</p>
         </div>
-        <div className="position-relative">
+        <div className="d-flex gap-2">
           <button 
-            className="btn btn-outline-secondary"
-            onClick={() => setShowExportMenu(!showExportMenu)}
+            className="btn btn-outline-warning"
+            onClick={refreshOrders}
+            title="Refresh Orders"
           >
-            <i className="bi bi-download me-2"></i>Export Orders
-            <i className="bi bi-chevron-down ms-2"></i>
+            <i className="bi bi-arrow-clockwise me-2"></i>Refresh
           </button>
+          <div className="position-relative">
+            <button 
+              className="btn btn-outline-secondary"
+              onClick={() => setShowExportMenu(!showExportMenu)}
+            >
+              <i className="bi bi-download me-2"></i>Export Orders
+              <i className="bi bi-chevron-down ms-2"></i>
+            </button>
           {showExportMenu && (
             <div 
               className="position-absolute end-0 mt-2 card-dark p-2 shadow"
@@ -122,6 +138,7 @@ function AdminOrders() {
               </button>
             </div>
           )}
+          </div>
         </div>
       </div>
 

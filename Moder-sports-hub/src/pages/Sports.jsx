@@ -128,6 +128,7 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
                     style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%)' }}
                   ></div>
                 </div>
+                <div className="sport-name-custom mt-2 text-center fw-semibold fs-5">{sport.name}</div>
                 <div className="p-3 text-center">
                   <h5 className="text-white mb-1">{sport.name}</h5>
                   <p className="text-muted-custom small mb-0 text-truncate">{sport.description}</p>
@@ -180,76 +181,65 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
 
         {/* Other Sports Pills */}
         <div className="mb-4">
-          <label className="text-muted-custom small d-block mb-2">
+          <label className="sports-switch-label">
             <i className="bi bi-trophy me-1"></i> Switch Sport
           </label>
-          <div className="d-flex flex-wrap gap-2">
+          <div className="sports-switcher-bar">
             {sportsCategories.map((sport) => (
               <Link
                 key={sport.slug}
                 to={`/sports/${sport.slug}`}
-                className={`btn btn-sm ${sportSlug === sport.slug ? 'btn-warning' : 'btn-outline-secondary'}`}
+                className={`sports-pill${sportSlug === sport.slug ? ' sports-pill-active' : ''}`}
               >
-                {sport.icon} {sport.name}
+                <span className="sports-pill-icon">{sport.icon}</span> <span className="sports-pill-name">{sport.name}</span>
               </Link>
             ))}
           </div>
         </div>
 
         {/* Filters */}
-        <div className="card-dark mb-4 p-3">
-          <div className="row g-3 align-items-center">
-            <div className="col-md-4">
-              <div className="input-group">
-                <span className="input-group-text bg-dark border-custom text-muted-custom">
-                  <i className="bi bi-search"></i>
-                </span>
-                <input
-                  type="text"
-                  className="form-control form-control-dark"
-                  placeholder="Search products..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="col-md-8">
-              <div className="d-flex flex-wrap gap-2 justify-content-md-end">
-                <select
-                  className="form-select form-select-dark w-auto"
-                  value={filterGender}
-                  onChange={(e) => setFilterGender(e.target.value)}
-                >
-                  <option value="All">All Genders</option>
-                  <option value="Men">Men</option>
-                  <option value="Women">Women</option>
-                  <option value="Unisex">Unisex</option>
-                </select>
-                <select
-                  className="form-select form-select-dark w-auto"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="featured">Featured</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="name-asc">Name: A-Z</option>
-                  <option value="newest">Newest First</option>
-                </select>
-                <div className="form-check form-switch d-flex align-items-center ms-2">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="inStockSports"
-                    checked={inStockOnly}
-                    onChange={(e) => setInStockOnly(e.target.checked)}
-                  />
-                  <label className="form-check-label text-muted-custom ms-2" htmlFor="inStockSports">
-                    In Stock
-                  </label>
-                </div>
-              </div>
-            </div>
+        <div className="sports-filters-bar mb-4">
+          <div className="sports-search-group">
+            <span className="sports-search-icon"><i className="bi bi-search"></i></span>
+            <input
+              type="text"
+              className="sports-search-input"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="sports-filters-controls">
+            <select
+              className="sports-filter-select"
+              value={filterGender}
+              onChange={(e) => setFilterGender(e.target.value)}
+            >
+              <option value="All">All Genders</option>
+              <option value="Men">Men</option>
+              <option value="Women">Women</option>
+              <option value="Unisex">Unisex</option>
+            </select>
+            <select
+              className="sports-filter-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A-Z</option>
+              <option value="newest">Newest First</option>
+            </select>
+            <label className="sports-instock-switch">
+              <input
+                type="checkbox"
+                checked={inStockOnly}
+                onChange={(e) => setInStockOnly(e.target.checked)}
+              />
+              <span className="sports-instock-slider"></span>
+              <span className="sports-instock-label">In Stock</span>
+            </label>
           </div>
         </div>
 

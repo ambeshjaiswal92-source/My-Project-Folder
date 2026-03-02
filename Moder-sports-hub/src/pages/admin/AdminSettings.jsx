@@ -168,11 +168,10 @@ function AdminSettings({ admin }) {
       offer: newSlider.offer || '',
       active: true
     }
-
+    
     setSliderImages([...sliderImages, slider])
     setNewSlider({ image: '', title: '', subtitle: '', offer: '' })
-    setShowAddSlider(false)
-
+    
     Swal.fire({
       toast: true,
       position: 'top-end',
@@ -185,73 +184,15 @@ function AdminSettings({ admin }) {
     })
   }
 
-  const handleUpdateSlider = () => {
-    if (!editingSlider.image || !editingSlider.title) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Missing Fields',
-        text: 'Please provide image URL and title',
-        background: '#1a1a2e',
-        color: '#fff',
-        confirmButtonColor: '#667eea'
-      })
-      return
-    }
-
-    setSliderImages(sliderImages.map(s => 
-      s.id === editingSlider.id ? editingSlider : s
-    ))
-    setEditingSlider(null)
-
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Slider Updated!',
-      showConfirmButton: false,
-      timer: 2000,
-      background: '#1a1a2e',
-      color: '#fff'
-    })
-  }
-
-  const handleDeleteSlider = (sliderId) => {
-    Swal.fire({
-      title: 'Delete Slider?',
-      text: 'Are you sure you want to remove this slider image?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, delete',
-      background: '#1a1a2e',
-      color: '#fff'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setSliderImages(sliderImages.filter(s => s.id !== sliderId))
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Slider Deleted!',
-          showConfirmButton: false,
-          timer: 2000,
-          background: '#1a1a2e',
-          color: '#fff'
-        })
-      }
-    })
-  }
-
   const toggleSliderActive = (sliderId) => {
-    setSliderImages(sliderImages.map(s => 
+    setSliderImages(sliderImages.map(s =>
       s.id === sliderId ? { ...s, active: !s.active } : s
-    ))
-  }
+    ));
+  };
 
   const handleStoreChange = (e) => {
-    setStoreSettings({ ...storeSettings, [e.target.name]: e.target.value })
-  }
+    setStoreSettings({ ...storeSettings, [e.target.name]: e.target.value });
+  };
 
   const handleNotificationChange = (key) => {
     const newSettings = { ...notificationSettings, [key]: !notificationSettings[key] }

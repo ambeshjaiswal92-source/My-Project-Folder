@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 const OrderContext = createContext()
 
@@ -14,6 +14,11 @@ const loadOrders = () => {
 
 export function OrderProvider({ children }) {
   const [orders, setOrders] = useState(loadOrders)
+
+  // Refresh orders from localStorage
+  const refreshOrders = useCallback(() => {
+    setOrders(loadOrders())
+  }, [])
 
   // Save orders to localStorage whenever they change
   useEffect(() => {
@@ -68,6 +73,7 @@ export function OrderProvider({ children }) {
       getOrderById,
       getOrdersByEmail,
       getOrderStats,
+      refreshOrders,
     }}>
       {children}
     </OrderContext.Provider>

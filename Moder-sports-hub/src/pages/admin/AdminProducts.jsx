@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useProducts } from '../../context/ProductContext'
+import axios from 'axios'
 
 function AdminProducts() {
   const { getAllProducts, addProduct, updateProduct, deleteProduct, refreshProducts } = useProducts()
@@ -353,6 +354,36 @@ function ProductModal({ product, onSave, onClose, categories }) {
     maxCapacity: product?.maxCapacity || '',
   })
 
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+
+  // Handle file upload
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const formDataUpload = new FormData()
+    formDataUpload.append('image', file)
+
+    setUploading(true)
+    setUploadError('')
+
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await axios.post('http://localhost:4001/api/upload', formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        }
+      })
+      setFormData({ ...formData, image: `http://localhost:4001${res.data.imageUrl}` })
+    } catch (error) {
+      setUploadError(error.response?.data?.message || 'Upload failed')
+    } finally {
+      setUploading(false)
+    }
+  }
+
   // Check if product is gym equipment
   const isGymEquipment = formData.category?.toLowerCase().includes('equipment') || formData.sport === 'Gym'
 
@@ -638,14 +669,44 @@ function ProductModal({ product, onSave, onClose, categories }) {
               )}
               
               <div className="mb-3">
-                <label className="form-label text-white">Image URL</label>
-                <input
-                  type="text"
-                  className="form-control form-control-dark"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://..."
-                />
+                <label className="form-label text-white">Product Image</label>
+                <div className="d-flex gap-2 align-items-center mb-2">
+                  <input
+                    type="file"
+                    className="form-control form-control-dark"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    disabled={uploading}
+                  />
+                  {uploading && (
+                    <div className="spinner-border spinner-border-sm text-warning" role="status">
+                      <span className="visually-hidden">Uploading...</span>
+                    </div>
+                  )}
+                </div>
+                {uploadError && <small className="text-danger">{uploadError}</small>}
+                <div className="mt-2">
+                  <small className="text-muted-custom">Or enter image URL directly:</small>
+                  <input
+                    type="text"
+                    className="form-control form-control-dark mt-1"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="https://..."
+                  />
+                </div>
+                {formData.image && (
+                  <div className="mt-2">
+                    <small className="text-muted-custom">Preview:</small>
+                    <img 
+                      src={formData.image} 
+                      alt="Preview" 
+                      className="d-block mt-1 rounded" 
+                      style={{ maxHeight: '100px', maxWidth: '100px', objectFit: 'cover' }}
+                      onError={(e) => e.target.style.display = 'none'}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="row g-3">

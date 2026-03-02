@@ -154,7 +154,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
         icon: 'error',
         confirmButtonText: 'OK',
         background: '#1a1a2e',
-        color: '#fff',
+        color: '#111',
       })
     } finally {
       setLoading(false)
@@ -167,8 +167,8 @@ function Payment({ cart, total, user, onOrderComplete }) {
   }
 
   return (
-    <main className="container py-4">
-      <h1 className="text-white mb-4">
+    <main className="payment-main-container">
+      <h1 className="text-black mb-4">
         <i className="bi bi-credit-card me-2"></i>Checkout
       </h1>
 
@@ -179,18 +179,18 @@ function Payment({ cart, total, user, onOrderComplete }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="row g-4">
-          <div className="col-lg-8">
+      <form onSubmit={handleSubmit} className="payment-form-layout">
+        <div className="payment-content-row">
+          <div className="payment-left-col">
             {/* Shipping Information */}
-            <div className="card-dark mb-4">
-              <h5 className="text-white mb-4">
+            <div className="payment-section-card mb-4">
+              <h5 className="text-black mb-4">
                 <i className="bi bi-truck me-2 text-warning"></i>Shipping Information
               </h5>
 
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label htmlFor="fullName" className="form-label text-white">Full Name</label>
+                  <label htmlFor="fullName" className="form-label text-black">Full Name</label>
                   <input
                     type="text"
                     className="form-control form-control-dark"
@@ -203,7 +203,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
                 </div>
 
                 <div className="col-md-6">
-                  <label htmlFor="email" className="form-label text-white">Email</label>
+                  <label htmlFor="email" className="form-label text-black">Email</label>
                   <input
                     type="email"
                     className="form-control form-control-dark"
@@ -217,7 +217,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
               </div>
 
               <div className="mt-3">
-                <label htmlFor="phone" className="form-label text-white">Phone Number</label>
+                <label htmlFor="phone" className="form-label text-black">Phone Number</label>
                 <input
                   type="tel"
                   className="form-control form-control-dark"
@@ -231,7 +231,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
               </div>
 
               <div className="mt-3">
-                <label htmlFor="address" className="form-label text-white">Address</label>
+                <label htmlFor="address" className="form-label text-black">Address</label>
                 <input
                   type="text"
                   className="form-control form-control-dark"
@@ -246,7 +246,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
 
               <div className="row g-3 mt-1">
                 <div className="col-md-4">
-                  <label htmlFor="city" className="form-label text-white">City</label>
+                  <label htmlFor="city" className="form-label text-black">City</label>
                   <input
                     type="text"
                     className="form-control form-control-dark"
@@ -259,7 +259,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
                 </div>
 
                 <div className="col-md-4">
-                  <label htmlFor="postalCode" className="form-label text-white">Postal Code</label>
+                  <label htmlFor="postalCode" className="form-label text-black">Postal Code</label>
                   <input
                     type="text"
                     className="form-control form-control-dark"
@@ -272,7 +272,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
                 </div>
 
                 <div className="col-md-4">
-                  <label htmlFor="country" className="form-label text-white">Country</label>
+                  <label htmlFor="country" className="form-label text-black">Country</label>
                   <input
                     type="text"
                     className="form-control form-control-dark"
@@ -287,8 +287,8 @@ function Payment({ cart, total, user, onOrderComplete }) {
             </div>
 
             {/* Payment Information */}
-            <div className="card-dark">
-              <h5 className="text-white mb-4">
+            <div className="payment-section-card">
+              <h5 className="text-black mb-4">
                 <i className="bi bi-shield-lock me-2 text-warning"></i>Payment Method
               </h5>
 
@@ -336,7 +336,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
               {paymentMethod === 'card' && (
                 <div className="payment-form">
                   <div className="mb-3">
-                    <label htmlFor="cardName" className="form-label text-white">Name on Card</label>
+                    <label htmlFor="cardName" className="form-label text-black">Name on Card</label>
                     <input
                       type="text"
                       className="form-control form-control-dark"
@@ -349,7 +349,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
                   </div>
 
                   <div className="mb-3">
-                    <label htmlFor="cardNumber" className="form-label text-white">Card Number</label>
+                    <label htmlFor="cardNumber" className="form-label text-black">Card Number</label>
                     <div className="input-group">
                       <span className="input-group-text bg-dark border-custom text-muted-custom">
                         <i className="bi bi-credit-card-2-front"></i>
@@ -370,7 +370,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
 
                   <div className="row g-3">
                     <div className="col-md-6">
-                      <label htmlFor="expiryDate" className="form-label text-white">Expiry Date</label>
+                      <label htmlFor="expiryDate" className="form-label text-black">Expiry Date</label>
                       <input
                         type="text"
                         className="form-control form-control-dark"
@@ -385,7 +385,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
                     </div>
 
                     <div className="col-md-6">
-                      <label htmlFor="cvv" className="form-label text-white">CVV</label>
+                      <label htmlFor="cvv" className="form-label text-black">CVV</label>
                       <input
                         type="text"
                         className="form-control form-control-dark"
@@ -413,7 +413,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
               {paymentMethod === 'upi' && (
                 <div className="payment-form">
                   <div className="mb-3">
-                    <label htmlFor="upiId" className="form-label text-white">UPI ID</label>
+                    <label htmlFor="upiId" className="form-label text-black">UPI ID</label>
                     <div className="input-group">
                       <span className="input-group-text bg-dark border-custom text-muted-custom">
                         <i className="bi bi-phone"></i>
@@ -450,7 +450,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
               {paymentMethod === 'netbanking' && (
                 <div className="payment-form">
                   <div className="mb-3">
-                    <label htmlFor="bank" className="form-label text-white">Select Your Bank</label>
+                    <label htmlFor="bank" className="form-label text-black">Select Your Bank</label>
                     <select
                       className="form-select form-control-dark"
                       id="bank"
@@ -487,14 +487,14 @@ function Payment({ cart, total, user, onOrderComplete }) {
                     <div className="d-flex align-items-center mb-2">
                       <i className="bi bi-check-circle-fill text-success fs-4 me-3"></i>
                       <div>
-                        <h6 className="text-white mb-1">Cash on Delivery Selected</h6>
+                        <h6 className="text-black mb-1">Cash on Delivery Selected</h6>
                         <small className="text-muted-custom">Pay when your order arrives at your doorstep</small>
                       </div>
                     </div>
                   </div>
 
                   <div className="card-dark bg-opacity-50 p-3 mt-3">
-                    <h6 className="text-white mb-3"><i className="bi bi-info-circle me-2"></i>COD Guidelines:</h6>
+                    <h6 className="text-black mb-3"><i className="bi bi-info-circle me-2"></i>COD Guidelines:</h6>
                     <ul className="text-muted-custom small mb-0">
                       <li className="mb-2">Keep exact change ready for faster delivery</li>
                       <li className="mb-2">Maximum COD limit: ₹50,000</li>
@@ -508,9 +508,9 @@ function Payment({ cart, total, user, onOrderComplete }) {
           </div>
 
           {/* Order Summary Sidebar */}
-          <div className="col-lg-4">
-            <div className="card-dark sticky-top" style={{ top: '100px' }}>
-              <h5 className="text-white mb-4">
+          <div className="payment-right-col">
+            <div className="payment-section-card payment-summary-card">
+              <h5 className="text-black mb-4">
                 <i className="bi bi-receipt me-2 text-warning"></i>Order Summary
               </h5>
 
@@ -518,14 +518,14 @@ function Payment({ cart, total, user, onOrderComplete }) {
                 {cart.map((item) => (
                   <li key={item.id} className="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
                     <span className="text-muted-custom">{item.name} × {item.qty}</span>
-                    <span className="text-white">{formatPrice(item.price * item.qty)}</span>
+                    <span className="text-black">{formatPrice(item.price * item.qty)}</span>
                   </li>
                 ))}
               </ul>
 
               <div className="d-flex justify-content-between py-2">
                 <span className="text-muted-custom">Subtotal</span>
-                <span className="text-white">{formatPrice(total)}</span>
+                <span className="text-black">{formatPrice(total)}</span>
               </div>
 
               <div className="d-flex justify-content-between py-2">
@@ -536,7 +536,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
               <hr className="border-secondary" />
 
               <div className="d-flex justify-content-between py-2 mb-4">
-                <span className="text-white fw-bold">Total</span>
+                <span className="text-black fw-bold">Total</span>
                 <span className="text-warning fw-bold fs-5">{formatPrice(total)}</span>
               </div>
 

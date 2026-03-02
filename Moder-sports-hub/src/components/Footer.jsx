@@ -44,26 +44,14 @@ function Footer() {
             </ul>
           </div>
 
-          <div className="col-lg-2 col-md-6 col-6">
-            <h6 className="text-white mb-3">Newsletter</h6>
-            <p className="text-muted-custom small mb-3">Get updates on new arrivals and offers.</p>
-            <div className="input-group">
-              <input type="email" className="form-control form-control-dark form-control-sm" placeholder="Email" />
-              <button className="btn btn-primary btn-sm">
-                <i className="bi bi-send"></i>
-              </button>
-            </div>
-          </div>
         </div>
 
         <hr className="border-custom my-4" />
 
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-          <p className="text-muted-custom mb-0 small">© 2026 Moder Sports Hub. All rights reserved.</p>
+          <p className="text-muted-custom mb-0 small">@ 2026 Moder Sports Hub. All rights reserved.</p>
           <div className="d-flex gap-3 small">
-            <a href="#" className="text-muted-custom">Privacy Policy</a>
-            <a href="#" className="text-muted-custom">Terms of Service</a>
-            <a href="#" className="text-muted-custom">Cookies</a>
+            
           </div>
         </div>
       </div>

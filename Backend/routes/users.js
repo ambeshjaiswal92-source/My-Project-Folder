@@ -143,4 +143,47 @@ router.get('/stats/overview', protect, admin, async (req, res) => {
     }
 });
 
+// @route   PUT /api/users/:id/password
+// @desc    Change user password
+// @access  Private
+router.put('/:id/password', protect, async (req, res) => {
+    try {
+        // Users can only change their own password
+        if (req.user._id.toString() !== req.params.id) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        const { currentPassword, newPassword } = req.body;
+
+        // Validate input
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: 'Please provide current and new password' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'New password must be at least 6 characters' });
+        }
+
+        // Get user with password
+        const user = await User.findById(req.params.id).select('+password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Verify current password
+        const isMatch = await user.matchPassword(currentPassword);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+        // Update password
+        user.password = newPassword;
+        await user.save();
+
+        res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 export default router;
