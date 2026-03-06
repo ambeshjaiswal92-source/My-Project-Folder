@@ -190,7 +190,7 @@ function MyOrders({ user }) {
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
         <div>
           <span className="badge badge-primary mb-2">My Orders</span>
-          <h2 className="text-white mb-1">Your recent purchases</h2>
+          <h2 className="text-orange-500 mb-1">Your recent purchases</h2>
           <p className="text-muted-custom mb-0">Signed in as {user.email}</p>
         </div>
         <div className="text-muted-custom">Total orders: {orders.length}</div>
