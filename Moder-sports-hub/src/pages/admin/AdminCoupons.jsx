@@ -297,9 +297,9 @@ function AdminCoupons() {
                     <tr key={coupon._id}>
                       <td>
                         <div>
-                          <span className="fw-bold font-monospace">{coupon.code}</span>
+                          <span className="fw-bold font-monospace text-dark">{coupon.code}</span>
                           {coupon.description && (
-                            <small className="d-block text-muted">{coupon.description}</small>
+                            <small className="d-block text-secondary">{coupon.description}</small>
                           )}
                         </div>
                       </td>
@@ -307,24 +307,24 @@ function AdminCoupons() {
                         <span className="badge bg-warning text-dark">
                           {coupon.discountType === 'percentage' 
                             ? `${coupon.discountValue}% OFF` 
-                            : `$${coupon.discountValue} OFF`}
+                            : `₹${coupon.discountValue} OFF`}
                         </span>
                         {coupon.minOrderAmount > 0 && (
-                          <small className="d-block text-muted">
-                            Min: ${coupon.minOrderAmount}
+                          <small className="d-block text-dark">
+                            Min: ₹{coupon.minOrderAmount}
                           </small>
                         )}
                       </td>
                       <td>
-                        <span className="fw-semibold">{coupon.usedCount || 0}</span>
+                        <span className="fw-semibold text-dark">{coupon.usedCount || 0}</span>
                         {coupon.usageLimit && (
-                          <span className="text-muted"> / {coupon.usageLimit}</span>
+                          <span className="text-secondary"> / {coupon.usageLimit}</span>
                         )}
                       </td>
                       <td>
                         <small>
-                          <div>{new Date(coupon.startDate).toLocaleDateString()}</div>
-                          <div className="text-muted">to {new Date(coupon.endDate).toLocaleDateString()}</div>
+                          <div className="text-dark">{new Date(coupon.startDate).toLocaleDateString()}</div>
+                          <div className="text-secondary">to {new Date(coupon.endDate).toLocaleDateString()}</div>
                         </small>
                       </td>
                       <td>{getStatusBadge(coupon)}</td>

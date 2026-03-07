@@ -3,15 +3,19 @@ import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import { useOrders } from '../context/OrderContext'
 import { processPayment, processPaymentMethod } from '../services/api'
+import api from '../services/api'
 
 const formatPrice = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`
 
-function Payment({ cart, total, user, appliedCoupon, onOrderComplete }) {
+function Payment({ cart, total, user, appliedCoupon, onApplyCoupon, onRemoveCoupon, onOrderComplete }) {
   const navigate = useNavigate()
   const { addOrder } = useOrders()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('card')
+  const [couponCode, setCouponCode] = useState('')
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [couponError, setCouponError] = useState('')
 
   // Calculate final total after coupon discount
   const discount = appliedCoupon?.discount || 0
@@ -42,6 +46,53 @@ function Payment({ cart, total, user, appliedCoupon, onOrderComplete }) {
 
   const handlePaymentChange = (e) => {
     setPaymentInfo({ ...paymentInfo, [e.target.name]: e.target.value })
+  }
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Please enter a coupon code')
+      return
+    }
+
+    setCouponLoading(true)
+    setCouponError('')
+
+    try {
+      const response = await api.post('/coupons/validate', {
+        code: couponCode,
+        orderTotal: total
+      })
+
+      if (onApplyCoupon) {
+        onApplyCoupon({
+          code: response.data.coupon.code,
+          discount: response.data.discount,
+          description: response.data.coupon.description
+        })
+      }
+
+      Swal.fire({
+        title: 'Coupon Applied!',
+        text: `You saved ${formatPrice(response.data.discount)}`,
+        icon: 'success',
+        background: '#1a1a2e',
+        color: '#fff',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    } catch (err) {
+      setCouponError(err.message || 'Invalid coupon code')
+    } finally {
+      setCouponLoading(false)
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setCouponCode('')
+    setCouponError('')
+    if (onRemoveCoupon) {
+      onRemoveCoupon()
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -544,11 +595,62 @@ function Payment({ cart, total, user, appliedCoupon, onOrderComplete }) {
                 <span className="text-success">Free</span>
               </div>
 
+              {/* Coupon Input Section */}
+              <div className="py-3 border-top border-bottom border-secondary my-3">
+                <label className="form-label small text-muted-custom mb-2">
+                  <i className="bi bi-tag me-1"></i>Have a coupon code?
+                </label>
+                {appliedCoupon ? (
+                  <div className="d-flex align-items-center justify-content-between p-2 rounded" style={{ background: '#e8f5e9', border: '1px solid #4caf50' }}>
+                    <div>
+                      <span className="fw-bold text-success">{appliedCoupon.code}</span>
+                      <small className="d-block text-muted">{appliedCoupon.description}</small>
+                    </div>
+                    <button 
+                      type="button"
+                      className="btn btn-sm text-danger" 
+                      onClick={handleRemoveCoupon}
+                      title="Remove coupon"
+                    >
+                      <i className="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Enter coupon code"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        style={{ borderColor: couponError ? '#dc3545' : '#ddd' }}
+                      />
+                      <button 
+                        type="button"
+                        className="btn btn-outline-success btn-sm" 
+                        onClick={handleApplyCoupon}
+                        disabled={couponLoading}
+                      >
+                        {couponLoading ? (
+                          <span className="spinner-border spinner-border-sm"></span>
+                        ) : (
+                          'Apply'
+                        )}
+                      </button>
+                    </div>
+                    {couponError && (
+                      <small className="text-danger d-block mt-1">{couponError}</small>
+                    )}
+                  </>
+                )}
+              </div>
+
               {appliedCoupon && (
                 <div className="d-flex justify-content-between py-2">
                   <span className="text-success">
                     <i className="bi bi-tag-fill me-1"></i>
-                    Coupon ({appliedCoupon.code})
+                    Discount
                   </span>
                   <span className="text-success">-{formatPrice(discount)}</span>
                 </div>

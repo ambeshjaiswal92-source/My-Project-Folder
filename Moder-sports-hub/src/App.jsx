@@ -274,6 +274,8 @@ function App() {
                 total={cartTotal}
                 user={user}
                 appliedCoupon={appliedCoupon}
+                onApplyCoupon={setAppliedCoupon}
+                onRemoveCoupon={() => setAppliedCoupon(null)}
                 onOrderComplete={handleOrderComplete}
               />
             ) : (
