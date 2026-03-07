@@ -6,12 +6,16 @@ import { processPayment, processPaymentMethod } from '../services/api'
 
 const formatPrice = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`
 
-function Payment({ cart, total, user, onOrderComplete }) {
+function Payment({ cart, total, user, appliedCoupon, onOrderComplete }) {
   const navigate = useNavigate()
   const { addOrder } = useOrders()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('card')
+
+  // Calculate final total after coupon discount
+  const discount = appliedCoupon?.discount || 0
+  const finalTotal = total - discount
 
   const [shippingInfo, setShippingInfo] = useState({
     fullName: user?.name || '',
@@ -84,6 +88,10 @@ function Payment({ cart, total, user, onOrderComplete }) {
           phone: shippingInfo.phone,
         },
         paymentMethod: paymentMethod === 'card' ? 'Card' : paymentMethod === 'upi' ? 'UPI' : paymentMethod === 'netbanking' ? 'NetBanking' : 'COD',
+        coupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          discount: appliedCoupon.discount
+        } : null,
       }
 
       // Call backend API to create order in MongoDB
@@ -116,7 +124,10 @@ function Payment({ cart, total, user, onOrderComplete }) {
           selectedColor: item.selectedColor
         })),
         itemCount: cart.reduce((sum, item) => sum + item.qty, 0),
-        total: savedOrder.total || total,
+        subtotal: total,
+        discount: discount,
+        coupon: appliedCoupon?.code || null,
+        total: savedOrder.total || finalTotal,
         shipping: shippingInfo,
         paymentMethod,
         payment: {
@@ -533,11 +544,21 @@ function Payment({ cart, total, user, onOrderComplete }) {
                 <span className="text-success">Free</span>
               </div>
 
+              {appliedCoupon && (
+                <div className="d-flex justify-content-between py-2">
+                  <span className="text-success">
+                    <i className="bi bi-tag-fill me-1"></i>
+                    Coupon ({appliedCoupon.code})
+                  </span>
+                  <span className="text-success">-{formatPrice(discount)}</span>
+                </div>
+              )}
+
               <hr className="border-secondary" />
 
               <div className="d-flex justify-content-between py-2 mb-4">
                 <span className="text-black fw-bold">Total</span>
-                <span className="text-warning fw-bold fs-5">{formatPrice(total)}</span>
+                <span className="text-warning fw-bold fs-5">{formatPrice(finalTotal)}</span>
               </div>
 
               <button type="submit" className="btn btn-primary w-100 btn-lg" disabled={loading}>
@@ -549,7 +570,7 @@ function Payment({ cart, total, user, onOrderComplete }) {
                 ) : (
                   <>
                     <i className={`bi ${paymentMethod === 'cod' ? 'bi-bag-check' : 'bi-lock-fill'} me-2`}></i>
-                    {paymentMethod === 'cod' ? 'Place Order' : `Pay ${formatPrice(total)}`}
+                    {paymentMethod === 'cod' ? 'Place Order' : `Pay ${formatPrice(finalTotal)}`}
                   </>
                 )}
               </button>

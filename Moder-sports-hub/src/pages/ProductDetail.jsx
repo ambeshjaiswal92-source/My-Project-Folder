@@ -55,6 +55,9 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
   const [selectedSize, setSelectedSize] = useState('')
   const [selectedColor, setSelectedColor] = useState('')
   
+  // Image states
+  const [selectedImage, setSelectedImage] = useState('')
+  
   // Review states
   const [reviews, setReviews] = useState([])
   const [showReviewForm, setShowReviewForm] = useState(false)
@@ -72,6 +75,7 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
     setQuantity(1)
     setSelectedSize('')
     setSelectedColor('')
+    setSelectedImage('')
     window.scrollTo(0, 0)
   }, [id])
 
@@ -198,6 +202,13 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
 
   const product = getProductById(id)
   const allProducts = getActiveProducts()
+
+  // Set initial selected image when product loads
+  useEffect(() => {
+    if (product) {
+      setSelectedImage(product.image)
+    }
+  }, [product?.id])
 
   // Show products from different categories (excluding current product)
   const productsByCategory = product
@@ -372,13 +383,54 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
       <div className="row g-4">
         {/* Product Image and Reviews */}
         <div className="col-lg-6">
-          <div className="product-detail-img position-relative" style={{ lineHeight: 0 }}>
-            <img src={product.image} alt={product.name} className="img-fluid rounded-4" style={{ display: 'block', width: '100%', height: 'auto' }} />
-            {discount > 0 && (
-              <span className="position-absolute top-0 start-0 m-3 badge bg-danger fs-6">
-                -{discount}%
-              </span>
-            )}
+          <div className="d-flex gap-3">
+            {/* Thumbnail Images Column */}
+            <div className="d-flex flex-column gap-2" style={{ width: '80px', flexShrink: 0 }}>
+              {/* Main image as first thumbnail */}
+              <div 
+                className={`rounded-3 overflow-hidden cursor-pointer border ${selectedImage === product.image ? 'border-primary border-2' : 'border-secondary'}`}
+                style={{ width: '80px', height: '80px', cursor: 'pointer' }}
+                onClick={() => setSelectedImage(product.image)}
+              >
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-100 h-100" 
+                  style={{ objectFit: 'cover' }} 
+                />
+              </div>
+              {/* Extra images */}
+              {product.images && product.images.slice(0, 4).map((img, index) => (
+                <div 
+                  key={index}
+                  className={`rounded-3 overflow-hidden cursor-pointer border ${selectedImage === img ? 'border-primary border-2' : 'border-secondary'}`}
+                  style={{ width: '80px', height: '80px', cursor: 'pointer' }}
+                  onClick={() => setSelectedImage(img)}
+                >
+                  <img 
+                    src={img} 
+                    alt={`${product.name} view ${index + 2}`} 
+                    className="w-100 h-100" 
+                    style={{ objectFit: 'cover' }} 
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Main Product Image */}
+            <div className="product-detail-img position-relative flex-grow-1" style={{ lineHeight: 0 }}>
+              <img 
+                src={selectedImage || product.image} 
+                alt={product.name} 
+                className="img-fluid rounded-4" 
+                style={{ display: 'block', width: '100%', height: 'auto' }} 
+              />
+              {discount > 0 && (
+                <span className="position-absolute top-0 start-0 m-3 badge bg-danger fs-6">
+                  -{discount}%
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Reviews & Feedback Section - Below Image */}

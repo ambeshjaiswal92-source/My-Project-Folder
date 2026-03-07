@@ -133,28 +133,28 @@
 
 /* Product Card Wrapper Responsive */
 .product-card-wrapper {
-  min-width: 180px;
-  max-width: 180px;
+  min-width: 220px;
+  max-width: 280px;
 }
 
 @media (min-width: 576px) {
   .product-card-wrapper {
-    min-width: 220px;
-    max-width: 220px;
+    min-width: 240px;
+    max-width: 300px;
   }
 }
 
 @media (min-width: 768px) {
   .product-card-wrapper {
     min-width: 260px;
-    max-width: 260px;
+    max-width: 320px;
   }
 }
 
 @media (min-width: 992px) {
   .product-card-wrapper {
     min-width: 280px;
-    max-width: 280px;
+    max-width: 340px;
   }
 }
 

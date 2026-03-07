@@ -1,6 +1,12 @@
+/* Homepage Background */
+.homepage-main {
+	background-color: #ede7f6;
+	min-height: 100vh;
+}
+
 /* Fashion Homepage Slider Styles */
 .fashion-slider {
-	background: #c2b1a0;
+	background: #e1bee7;
 	min-height: 480px;
 	display: flex;
 	align-items: center;
@@ -15,7 +21,7 @@
 	color: #222;
 }
 .fashion-slider-label {
-	color: #bfa58a;
+	color: #7b1fa2;
 	font-weight: 700;
 	letter-spacing: 2px;
 	font-size: 1.1rem;
@@ -27,7 +33,7 @@
 	font-weight: 800;
 	line-height: 1.1;
 	margin-bottom: 2.5rem;
-	color: #1a237e; /* Deep blue */
+	color: #4a148c; /* Deep purple */
 	font-family: 'Montserrat', sans-serif;
 }
 .fashion-slider-btns {
@@ -36,8 +42,8 @@
 	margin-bottom: 2rem;
 }
 .fashion-slider-price {
-	background: #ffd600; /* Bright yellow */
-	color: #222;
+	background: #ab47bc; /* Medium purple */
+	color: #fff;
 	border: none;
 	border-radius: 2rem;
 	font-size: 1.2rem;
@@ -47,7 +53,7 @@
 	font-family: 'Montserrat', sans-serif;
 }
 .fashion-slider-buy {
-	background: #1a237e; /* Deep blue */
+	background: #7b1fa2; /* Dark purple */
 	color: #fff;
 	border: none;
 	border-radius: 2rem;
@@ -58,7 +64,7 @@
 	font-family: 'Montserrat', sans-serif;
 }
 .fashion-slider-buy:hover {
-	background: #283593; /* Slightly lighter blue */
+	background: #9c27b0; /* Lighter purple */
 }
 .fashion-slider-image {
 	flex: 1;
@@ -98,7 +104,7 @@
 	cursor: pointer;
 }
 .fashion-slider-dot.active {
-	background: #ff2e63;
+	background: #9c27b0;
 	opacity: 1;
 }
 /* App-specific styles */

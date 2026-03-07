@@ -5,7 +5,7 @@ const fashionSlides = [
     title: 'Puma Phase Sports Bag - Californiann',
     price: 'Starting at the ₹130',
     image: 'https://www.californian.co.za/wp-content/uploads/2023/10/A1849-PUMA-BLACK-PHASE-SPORT4-1024x1024.jpg',
-    bg: '#c2b1a0'
+    bg: '#e1bee7'
   },
   {
     id: 2,
@@ -13,7 +13,7 @@ const fashionSlides = [
     title: 'Nike Run Division Miler Mens Flash Running Jacket. Nike SG',
     price: 'Start Up to ₹99',
     image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/dfd51767-5abf-4e76-b94e-83a2fb7556c0/run-division-miler-flash-running-jacket-vNGRMq.png',
-    bg: '#e0e0e0'
+    bg: '#ce93d8'
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const fashionSlides = [
     title: 'Sports Shoes\nLimited Edition',
     price: 'Start Up to ₹99',
     image: 'https://tse1.mm.bing.net/th/id/OIP.RBQzOzeCj_SCSb1MAizonwHaHw?rs=1&pid=ImgDetMain&o=7&rm=3',
-    bg: '#e0e0e0'
+    bg: '#ba68c8'
   }
 ];
 import { Link } from 'react-router-dom'
@@ -58,7 +58,7 @@ function Home({ onAddToCart, wishlist, onToggleWishlist }) {
   const products = getActiveProducts ? getActiveProducts() : [];
 
   return (
-    <main>
+    <main className="homepage-main">
       {/* Fashion Slider */}
       <section className="fashion-slider" style={{background: fashion.bg}}>
         <div className="fashion-slider-content">

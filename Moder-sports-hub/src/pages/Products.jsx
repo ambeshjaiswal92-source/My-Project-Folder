@@ -1,8 +1,9 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
+import FilterSidebar from '../components/FilterSidebar'
 import { useProducts } from '../context/ProductContext'
-import { productTypes, productMatchesSport, getSportBySlug } from '../data/sports'
+import { sportsCategories, productMatchesSport } from '../data/sports'
 
 function Products({ onAddToCart, wishlist, onToggleWishlist }) {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -10,16 +11,10 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
   const products = getActiveProducts()
 
   // Get filters from URL
-  const urlSport = searchParams.get('sport') || 'all'
-  const urlType = searchParams.get('type') || 'all'
+  const urlSport = searchParams.get('sport') || ''
 
   const categories = useMemo(() => {
-    const base = [
-      'Wear',        // Clothing items
-      'Footwear',    // Shoes, sneakers
-      'Equipment',   // Sports gear
-      'Accessories', // Small items
-    ]
+    const base = ['Wear', 'Footwear', 'Equipment', 'Accessories']
     const excludeCategories = ['Wearable', 'Gear', 'Performance Wear', 'All']
     const set = new Set(base)
     products.forEach((p) => {
@@ -31,38 +26,61 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
     return Array.from(set)
   }, [products])
 
-  const [filterSport, setFilterSport] = useState(urlSport)
-  const [filterType, setFilterType] = useState(urlType)
-  const [filterGender, setFilterGender] = useState('All')
-  const [inStockOnly, setInStockOnly] = useState(false)
+  // Extract unique brands from products
+  const brands = useMemo(() => {
+    const brandSet = new Set()
+    products.forEach((p) => {
+      if (p.brand) brandSet.add(p.brand)
+    })
+    return Array.from(brandSet).sort()
+  }, [products])
+
+  // Multi-select filter states
+  const [selectedSports, setSelectedSports] = useState(urlSport ? [urlSport] : [])
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [selectedGenders, setSelectedGenders] = useState([])
+  const [selectedBrands, setSelectedBrands] = useState([])
   const [sortBy, setSortBy] = useState('featured')
   const [searchTerm, setSearchTerm] = useState('')
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   // Sync URL params with state
   useEffect(() => {
-    setFilterSport(urlSport)
-    setFilterType(urlType)
-  }, [urlSport, urlType])
-
-  // Get current sport name for display
-  const currentSport = getSportBySlug(filterSport)
-
-  const handleTypeChange = (type) => {
-    setFilterType(type)
-    const params = new URLSearchParams(searchParams)
-    if (type === 'all') {
-      params.delete('type')
-    } else {
-      params.set('type', type)
+    if (urlSport && !selectedSports.includes(urlSport)) {
+      setSelectedSports([urlSport])
     }
-    setSearchParams(params)
+  }, [urlSport])
+
+  // Filter handlers
+  const handleSportChange = (sport, checked) => {
+    setSelectedSports(prev => 
+      checked ? [...prev, sport] : prev.filter(s => s !== sport)
+    )
+  }
+
+  const handleCategoryChange = (category, checked) => {
+    setSelectedCategories(prev => 
+      checked ? [...prev, category] : prev.filter(c => c !== category)
+    )
+  }
+
+  const handleGenderChange = (gender, checked) => {
+    setSelectedGenders(prev => 
+      checked ? [...prev, gender] : prev.filter(g => g !== gender)
+    )
+  }
+
+  const handleBrandChange = (brand, checked) => {
+    setSelectedBrands(prev => 
+      checked ? [...prev, brand] : prev.filter(b => b !== brand)
+    )
   }
 
   const clearFilters = () => {
-    setFilterSport('all')
-    setFilterType('all')
-    setFilterGender('All')
-    setInStockOnly(false)
+    setSelectedSports([])
+    setSelectedCategories([])
+    setSelectedGenders([])
+    setSelectedBrands([])
     setSearchTerm('')
     setSearchParams({})
   }
@@ -72,29 +90,41 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
       const categoryVal = (product.category || product.tag || '').toLowerCase()
       const nameVal = (product.name || '').toLowerCase()
       const descVal = (product.description || '').toLowerCase()
-      const genderVal = (product.gender || 'Unisex').toLowerCase()
+      const genderVal = (product.gender || 'Unisex')
+      const brandVal = product.brand || ''
 
-      // Sport filter - use the helper function from sports.js (from URL/navbar only)
-      const matchesSport = productMatchesSport(product, filterSport)
-
-      // Type filter - check category
-      let matchesType = filterType === 'all'
-      if (!matchesType) {
-        const typeKeyword = filterType.toLowerCase().replace('-', ' ')
-        matchesType = categoryVal.includes(typeKeyword) ||
-          categoryVal.includes(filterType.toLowerCase())
+      // Sport filter - check if any selected sport matches
+      let matchesSport = selectedSports.length === 0
+      if (!matchesSport) {
+        matchesSport = selectedSports.some(sport => productMatchesSport(product, sport))
       }
 
-      const matchesGender = filterGender === 'All'
-        ? true
-        : genderVal === filterGender.toLowerCase()
-      const matchesStock = inStockOnly ? Number(product.stock || 0) > 0 : true
-      const matchesSearch = nameVal.includes(searchTerm.toLowerCase()) ||
+      // Category filter
+      let matchesCategory = selectedCategories.length === 0
+      if (!matchesCategory) {
+        matchesCategory = selectedCategories.some(cat => categoryVal.includes(cat))
+      }
+
+      // Gender filter
+      let matchesGender = selectedGenders.length === 0
+      if (!matchesGender) {
+        matchesGender = selectedGenders.includes(genderVal)
+      }
+
+      // Brand filter
+      let matchesBrand = selectedBrands.length === 0
+      if (!matchesBrand) {
+        matchesBrand = selectedBrands.includes(brandVal)
+      }
+
+      // Search filter
+      const matchesSearch = searchTerm === '' || 
+        nameVal.includes(searchTerm.toLowerCase()) ||
         descVal.includes(searchTerm.toLowerCase())
 
-      return matchesSport && matchesType && matchesGender && matchesStock && matchesSearch
+      return matchesSport && matchesCategory && matchesGender && matchesBrand && matchesSearch
     })
-  }, [products, filterSport, filterType, filterGender, inStockOnly, searchTerm])
+  }, [products, selectedSports, selectedCategories, selectedGenders, selectedBrands, searchTerm])
 
   const sortedProducts = useMemo(() => {
     const list = [...filteredProducts]
@@ -112,71 +142,160 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
     }
   }, [filteredProducts, sortBy])
 
-  // Group sorted products by category
-  const grouped = sortedProducts.reduce((acc, product) => {
-    if (!acc[product.category]) acc[product.category] = [];
-    acc[product.category].push(product);
-    return acc;
-  }, {});
+  const activeFilterCount = selectedSports.length + selectedCategories.length + 
+    selectedGenders.length + selectedBrands.length
 
   return (
-    <main className="py-5">
-      <div className="container">
-        {/* Filters UI */}
-        <div className="row mb-4 g-2">
-          <div className="col-12">
-            <div className="filter-bar-container">
-              {/* Type Filter */}
-              <select className="filter-select" value={filterType} onChange={e => handleTypeChange(e.target.value)}>
-                <option value="all">All Types</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat.toLowerCase()}>{cat}</option>
-                ))}
-              </select>
-              {/* Gender Filter */}
-              <select className="filter-select" value={filterGender} onChange={e => setFilterGender(e.target.value)}>
-                <option value="All">All Genders</option>
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
-                <option value="Unisex">Unisex</option>
-              </select>
-              {/* Sort By */}
-              <select className="filter-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
-                <option value="featured">Featured</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name-asc">Name: A-Z</option>
-                <option value="newest">Newest</option>
-              </select>
-              {/* Search */}
-              <input type="text" className="filter-search" placeholder="Search products..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-              {/* Clear Filters */}
-              <button className="filter-clear-btn" onClick={clearFilters}><i className="bi bi-x-lg me-1"></i>Clear</button>
-            </div>
-          </div>
-        </div>
-        {/* Results Count */}
-        <div className="mb-3 text-muted-custom small">
-          Showing {sortedProducts.length} of {products.length} products
-        </div>
-
-        {/* Products Grouped by Category */}
-        {Object.keys(grouped).length === 0 ? (
-          <div className="col-12 text-center py-5">
-            <i className="bi bi-search display-1 text-muted-custom mb-4 d-block"></i>
-            <h4 className="text-white mb-2">No products match your filters</h4>
-            <p className="text-muted-custom mb-4">Try adjusting your filters or search term.</p>
-            <button className="btn btn-primary" onClick={clearFilters}>
-              <i className="bi bi-arrow-counterclockwise me-2"></i> Reset Filters
+    <main className="py-4">
+      <div className="container-fluid px-3 px-lg-5">
+        <div className="row">
+          {/* Mobile Filter Toggle */}
+          <div className="col-12 d-lg-none mb-3">
+            <button 
+              className="btn btn-outline-secondary w-100"
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+            >
+              <i className="bi bi-funnel me-2"></i>
+              Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
             </button>
           </div>
-        ) : (
-          Object.entries(grouped).map(([category, items]) => (
-            <div key={category} className="mb-5">
-              <h4 className="sport-name-custom mb-3">{category}</h4>
+
+          {/* Mobile Filter Overlay */}
+          {showMobileFilters && (
+            <div className="filter-mobile-overlay d-lg-none">
+              <div className="filter-mobile-content">
+                <div className="filter-mobile-header">
+                  <h5>Filters</h5>
+                  <button 
+                    className="btn-close" 
+                    onClick={() => setShowMobileFilters(false)}
+                  ></button>
+                </div>
+                <FilterSidebar
+                  sports={sportsCategories}
+                  categories={categories}
+                  brands={brands}
+                  selectedSports={selectedSports}
+                  selectedCategories={selectedCategories}
+                  selectedGenders={selectedGenders}
+                  selectedBrands={selectedBrands}
+                  onSportChange={handleSportChange}
+                  onCategoryChange={handleCategoryChange}
+                  onGenderChange={handleGenderChange}
+                  onBrandChange={handleBrandChange}
+                  onClearFilters={clearFilters}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Desktop Sidebar */}
+          <div className="col-lg-3 col-xl-2 d-none d-lg-block">
+            <FilterSidebar
+              sports={sportsCategories}
+              categories={categories}
+              brands={brands}
+              selectedSports={selectedSports}
+              selectedCategories={selectedCategories}
+              selectedGenders={selectedGenders}
+              selectedBrands={selectedBrands}
+              onSportChange={handleSportChange}
+              onCategoryChange={handleCategoryChange}
+              onGenderChange={handleGenderChange}
+              onBrandChange={handleBrandChange}
+              onClearFilters={clearFilters}
+            />
+          </div>
+
+          {/* Products Section */}
+          <div className="col-lg-9 col-xl-10">
+            {/* Top Bar: Search and Sort */}
+            <div className="products-topbar mb-4">
+              <div className="products-topbar-left">
+                <input 
+                  type="text" 
+                  className="products-search-input" 
+                  placeholder="Search products..." 
+                  value={searchTerm} 
+                  onChange={e => setSearchTerm(e.target.value)} 
+                />
+              </div>
+              <div className="products-topbar-right">
+                <span className="products-count">
+                  {sortedProducts.length} products
+                </span>
+                <select 
+                  className="products-sort-select" 
+                  value={sortBy} 
+                  onChange={e => setSortBy(e.target.value)}
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="name-asc">Name: A-Z</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Active Filters Display */}
+            {activeFilterCount > 0 && (
+              <div className="active-filters mb-3">
+                {selectedSports.map(sport => {
+                  const sportData = sportsCategories.find(s => s.slug === sport)
+                  return (
+                    <span key={sport} className="active-filter-tag">
+                      {sportData?.name || sport}
+                      <button onClick={() => handleSportChange(sport, false)}>
+                        <i className="bi bi-x"></i>
+                      </button>
+                    </span>
+                  )
+                })}
+                {selectedCategories.map(cat => (
+                  <span key={cat} className="active-filter-tag">
+                    {cat}
+                    <button onClick={() => handleCategoryChange(cat, false)}>
+                      <i className="bi bi-x"></i>
+                    </button>
+                  </span>
+                ))}
+                {selectedGenders.map(gender => (
+                  <span key={gender} className="active-filter-tag">
+                    {gender}
+                    <button onClick={() => handleGenderChange(gender, false)}>
+                      <i className="bi bi-x"></i>
+                    </button>
+                  </span>
+                ))}
+                {selectedBrands.map(brand => (
+                  <span key={brand} className="active-filter-tag">
+                    {brand}
+                    <button onClick={() => handleBrandChange(brand, false)}>
+                      <i className="bi bi-x"></i>
+                    </button>
+                  </span>
+                ))}
+                <button className="clear-all-filters-btn" onClick={clearFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+
+            {/* Products Grid */}
+            {sortedProducts.length === 0 ? (
+              <div className="text-center py-5">
+                <i className="bi bi-search display-1 text-muted-custom mb-4 d-block"></i>
+                <h4 className="text-white mb-2">No products match your filters</h4>
+                <p className="text-muted-custom mb-4">Try adjusting your filters or search term.</p>
+                <button className="btn btn-primary" onClick={clearFilters}>
+                  <i className="bi bi-arrow-counterclockwise me-2"></i> Reset Filters
+                </button>
+              </div>
+            ) : (
               <div className="row g-3 g-md-4">
-                {items.map(product => (
-                  <div key={product.id} className="col-6 col-md-4 col-lg-4 col-xl-3">
+                {sortedProducts.map(product => (
+                  <div key={product.id} className="col-6 col-md-4 col-xl-3">
                     <ProductCard
                       product={product}
                       onAddToCart={onAddToCart}
@@ -186,9 +305,9 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
                   </div>
                 ))}
               </div>
-            </div>
-          ))
-        )}
+            )}
+          </div>
+        </div>
       </div>
     </main>
   )

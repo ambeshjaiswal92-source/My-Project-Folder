@@ -1,11 +1,69 @@
 
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import api from '../services/api'
 
 const formatPrice = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`
 
-function Cart({ cart, updateQty, removeFromCart, total }) {
+function Cart({ cart, updateQty, removeFromCart, total, appliedCoupon, onApplyCoupon, onRemoveCoupon }) {
   const navigate = useNavigate();
+  const [couponCode, setCouponCode] = useState('')
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [couponError, setCouponError] = useState('')
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Please enter a coupon code')
+      return
+    }
+
+    setCouponLoading(true)
+    setCouponError('')
+
+    try {
+      const response = await api.post('/coupons/validate', {
+        code: couponCode,
+        orderTotal: total
+      })
+
+      // Pass coupon info to parent (App.jsx)
+      if (onApplyCoupon) {
+        onApplyCoupon({
+          code: response.data.coupon.code,
+          discount: response.data.discount,
+          description: response.data.coupon.description
+        })
+      }
+
+      Swal.fire({
+        title: 'Coupon Applied!',
+        text: `You saved ${formatPrice(response.data.discount)}`,
+        icon: 'success',
+        background: '#1a1a2e',
+        color: '#fff',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    } catch (err) {
+      setCouponError(err.message || 'Invalid coupon code')
+      if (onApplyCoupon) {
+        onApplyCoupon(null)
+      }
+    } finally {
+      setCouponLoading(false)
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setCouponCode('')
+    setCouponError('')
+    if (onRemoveCoupon) {
+      onRemoveCoupon()
+    }
+  }
+
+  const finalTotal = appliedCoupon ? total - appliedCoupon.discount : total
 
   const handleCheckout = async () => {
     const result = await Swal.fire({
@@ -107,10 +165,62 @@ function Cart({ cart, updateQty, removeFromCart, total }) {
             <div className="card-body">
               <h5 className="mb-4" style={{ color: '#222', fontWeight: 700 }}>Order Summary</h5>
 
+              {/* Coupon Input */}
+              <div className="mb-4">
+                <label className="form-label small" style={{ color: '#666' }}>Have a coupon?</label>
+                {appliedCoupon ? (
+                  <div className="d-flex align-items-center justify-content-between p-2 rounded" style={{ background: '#e8f5e9', border: '1px solid #4caf50' }}>
+                    <div>
+                      <span className="fw-bold text-success">{appliedCoupon.code}</span>
+                      <small className="d-block text-muted">{appliedCoupon.description}</small>
+                    </div>
+                    <button 
+                      className="btn btn-sm text-danger" 
+                      onClick={handleRemoveCoupon}
+                      title="Remove coupon"
+                    >
+                      <i className="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter coupon code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      style={{ borderColor: couponError ? '#dc3545' : '#ddd' }}
+                    />
+                    <button 
+                      className="btn btn-outline-secondary" 
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading}
+                    >
+                      {couponLoading ? (
+                        <span className="spinner-border spinner-border-sm"></span>
+                      ) : (
+                        'Apply'
+                      )}
+                    </button>
+                  </div>
+                )}
+                {couponError && (
+                  <small className="text-danger">{couponError}</small>
+                )}
+              </div>
+
               <div className="d-flex justify-content-between mb-3">
                 <span style={{ color: '#888' }}>Subtotal</span>
                 <span style={{ color: '#222' }}>{formatPrice(total)}</span>
               </div>
+
+              {appliedCoupon && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span style={{ color: '#4caf50' }}>Discount</span>
+                  <span style={{ color: '#4caf50' }}>-{formatPrice(appliedCoupon.discount)}</span>
+                </div>
+              )}
 
               <div className="d-flex justify-content-between mb-3">
                 <span style={{ color: '#888' }}>Shipping</span>
@@ -121,7 +231,7 @@ function Cart({ cart, updateQty, removeFromCart, total }) {
 
               <div className="d-flex justify-content-between mb-4">
                 <span className="fw-semibold" style={{ color: '#222' }}>Total</span>
-                <span className="fw-bold fs-5" style={{ color: '#e3343c' }}>{formatPrice(total)}</span>
+                <span className="fw-bold fs-5" style={{ color: '#e3343c' }}>{formatPrice(finalTotal)}</span>
               </div>
 
               <div className="d-grid gap-2">

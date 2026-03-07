@@ -10,7 +10,6 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
   const products = getActiveProducts()
 
   const [filterGender, setFilterGender] = useState('All')
-  const [inStockOnly, setInStockOnly] = useState(false)
   const [sortBy, setSortBy] = useState('featured')
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -19,7 +18,6 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
 
   const clearFilters = () => {
     setFilterGender('All')
-    setInStockOnly(false)
     setSearchTerm('')
   }
 
@@ -35,13 +33,12 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
       const matchesGender = filterGender === 'All'
         ? true
         : genderVal === filterGender.toLowerCase()
-      const matchesStock = inStockOnly ? Number(product.stock || 0) > 0 : true
       const matchesSearch = nameVal.includes(searchTerm.toLowerCase()) ||
         descVal.includes(searchTerm.toLowerCase())
 
-      return matchesSport && matchesGender && matchesStock && matchesSearch
+      return matchesSport && matchesGender && matchesSearch
     })
-  }, [products, sportSlug, filterGender, inStockOnly, searchTerm])
+  }, [products, sportSlug, filterGender, searchTerm])
 
   const sortedProducts = useMemo(() => {
     const list = [...filteredProducts]
@@ -172,7 +169,7 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
               {currentSport?.description || 'Browse products for this sport'}
             </p>
           </div>
-          {(filterGender !== 'All' || inStockOnly || searchTerm) && (
+          {(filterGender !== 'All' || searchTerm) && (
             <button className="btn btn-outline-warning btn-sm" onClick={clearFilters}>
               <i className="bi bi-x-circle me-1"></i> Clear Filters
             </button>
@@ -231,15 +228,7 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
               <option value="name-asc">Name: A-Z</option>
               <option value="newest">Newest First</option>
             </select>
-            <label className="sports-instock-switch">
-              <input
-                type="checkbox"
-                checked={inStockOnly}
-                onChange={(e) => setInStockOnly(e.target.checked)}
-              />
-              <span className="sports-instock-slider"></span>
-              <span className="sports-instock-label">In Stock</span>
-            </label>
+
           </div>
         </div>
 

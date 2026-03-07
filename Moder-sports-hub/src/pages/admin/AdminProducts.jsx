@@ -338,6 +338,7 @@ function ProductModal({ product, onSave, onClose, categories }) {
     sport: product?.sport || '',
     badge: product?.badge || '',
     image: product?.image || '',
+    images: product?.images || [],
     status: product?.status || 'Active',
     sizes: getInitialSizes(),
     colors: Array.isArray(product?.colors) ? product.colors.join(', ') : 'Black, White',
@@ -355,9 +356,11 @@ function ProductModal({ product, onSave, onClose, categories }) {
   })
 
   const [uploading, setUploading] = useState(false)
+  const [uploadingExtra, setUploadingExtra] = useState(false)
   const [uploadError, setUploadError] = useState('')
+  const [uploadExtraError, setUploadExtraError] = useState('')
 
-  // Handle file upload
+  // Handle file upload for main image
   const handleFileUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -382,6 +385,46 @@ function ProductModal({ product, onSave, onClose, categories }) {
     } finally {
       setUploading(false)
     }
+  }
+
+  // Handle file upload for extra images
+  const handleExtraImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    if (formData.images.length >= 4) {
+      setUploadExtraError('Maximum 4 extra images allowed')
+      return
+    }
+
+    const formDataUpload = new FormData()
+    formDataUpload.append('image', file)
+
+    setUploadingExtra(true)
+    setUploadExtraError('')
+
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await axios.post('http://localhost:4001/api/upload', formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        }
+      })
+      const newImageUrl = `http://localhost:4001${res.data.imageUrl}`
+      setFormData({ ...formData, images: [...formData.images, newImageUrl] })
+    } catch (error) {
+      setUploadExtraError(error.response?.data?.message || 'Upload failed')
+    } finally {
+      setUploadingExtra(false)
+      e.target.value = '' // Reset file input
+    }
+  }
+
+  // Remove extra image
+  const removeExtraImage = (index) => {
+    const newImages = formData.images.filter((_, i) => i !== index)
+    setFormData({ ...formData, images: newImages })
   }
 
   // Check if product is gym equipment
@@ -423,6 +466,7 @@ function ProductModal({ product, onSave, onClose, categories }) {
       stock,
       status,
       sport: formData.sport || '',
+      images: formData.images || [],
       sizes: sizes.length ? sizes : getSizesForCategory(formData.category).split(', '),
       colors: colors.length ? colors : ['Black', 'White'],
       gender: formData.gender || 'Unisex',
@@ -669,7 +713,7 @@ function ProductModal({ product, onSave, onClose, categories }) {
               )}
               
               <div className="mb-3">
-                <label className="form-label text-white">Product Image</label>
+                <label className="form-label text-white">Main Product Image</label>
                 <div className="d-flex gap-2 align-items-center mb-2">
                   <input
                     type="file"
@@ -705,6 +749,61 @@ function ProductModal({ product, onSave, onClose, categories }) {
                       style={{ maxHeight: '100px', maxWidth: '100px', objectFit: 'cover' }}
                       onError={(e) => e.target.style.display = 'none'}
                     />
+                  </div>
+                )}
+              </div>
+
+              {/* Extra Images Section */}
+              <div className="mb-3">
+                <label className="form-label text-white">
+                  Extra Images ({formData.images.length}/4)
+                  <small className="text-muted-custom ms-2">Additional product views</small>
+                </label>
+                <div className="d-flex gap-2 align-items-center mb-2">
+                  <input
+                    type="file"
+                    className="form-control form-control-dark"
+                    accept="image/*"
+                    onChange={handleExtraImageUpload}
+                    disabled={uploadingExtra || formData.images.length >= 4}
+                  />
+                  {uploadingExtra && (
+                    <div className="spinner-border spinner-border-sm text-warning" role="status">
+                      <span className="visually-hidden">Uploading...</span>
+                    </div>
+                  )}
+                </div>
+                {uploadExtraError && <small className="text-danger d-block mb-2">{uploadExtraError}</small>}
+                {formData.images.length >= 4 && (
+                  <small className="text-warning d-block mb-2">
+                    <i className="bi bi-info-circle me-1"></i>Maximum 4 extra images reached
+                  </small>
+                )}
+                {formData.images.length > 0 && (
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    {formData.images.map((img, index) => (
+                      <div key={index} className="position-relative">
+                        <img 
+                          src={img} 
+                          alt={`Extra ${index + 1}`} 
+                          className="rounded border border-secondary" 
+                          style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                          onError={(e) => e.target.src = 'https://placehold.co/80x80/1a1a2e/ffffff?text=Error'}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center"
+                          style={{ width: '20px', height: '20px', transform: 'translate(25%, -25%)' }}
+                          onClick={() => removeExtraImage(index)}
+                          title="Remove image"
+                        >
+                          <i className="bi bi-x" style={{ fontSize: '12px' }}></i>
+                        </button>
+                        <small className="d-block text-center text-muted-custom mt-1" style={{ fontSize: '10px' }}>
+                          Image {index + 1}
+                        </small>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

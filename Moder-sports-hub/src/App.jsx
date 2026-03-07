@@ -64,6 +64,7 @@ function App() {
   const [cart, setCart] = useState([])
   const [wishlist, setWishlist] = useState([])
   const [lastOrder, setLastOrder] = useState(null)
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
 
   // Persist user to localStorage (both keys for consistency)
   useEffect(() => {
@@ -255,6 +256,9 @@ function App() {
                 updateQty={updateQty}
                 removeFromCart={removeFromCart}
                 total={cartTotal}
+                appliedCoupon={appliedCoupon}
+                onApplyCoupon={setAppliedCoupon}
+                onRemoveCoupon={() => setAppliedCoupon(null)}
               />
             ) : (
               <Navigate to="/login" replace />
@@ -269,6 +273,7 @@ function App() {
                 cart={cart}
                 total={cartTotal}
                 user={user}
+                appliedCoupon={appliedCoupon}
                 onOrderComplete={handleOrderComplete}
               />
             ) : (
