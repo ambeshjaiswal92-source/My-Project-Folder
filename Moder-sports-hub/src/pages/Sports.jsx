@@ -65,7 +65,7 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
             <div>
               <span className="badge badge-primary mb-2">Sports</span>
-              <h2 className="text-white mb-2">Browse by Sport</h2>
+              <h2 className="mb-2" style={{ color: '#000' }}>Browse by Sport</h2>
               <p className="text-muted-custom mb-0">Select a sport to explore related products and gear</p>
             </div>
             <div className="d-flex gap-2 align-items-center">

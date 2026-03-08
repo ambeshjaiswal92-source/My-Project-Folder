@@ -190,7 +190,7 @@ function Cart({ cart, updateQty, removeFromCart, total, appliedCoupon, onApplyCo
                       placeholder="Enter coupon code"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                      style={{ borderColor: couponError ? '#dc3545' : '#ddd' }}
+                      style={{ borderColor: couponError ? '#dc3545' : '#ddd', backgroundColor: '#fff', color: '#333' }}
                     />
                     <button 
                       className="btn btn-outline-secondary" 

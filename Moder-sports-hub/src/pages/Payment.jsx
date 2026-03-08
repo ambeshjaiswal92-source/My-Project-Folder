@@ -624,7 +624,11 @@ function Payment({ cart, total, user, appliedCoupon, onApplyCoupon, onRemoveCoup
                         placeholder="Enter coupon code"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        style={{ borderColor: couponError ? '#dc3545' : '#ddd' }}
+                        style={{ 
+                          borderColor: couponError ? '#dc3545' : '#ddd',
+                          backgroundColor: '#fff',
+                          color: '#333'
+                        }}
                       />
                       <button 
                         type="button"
