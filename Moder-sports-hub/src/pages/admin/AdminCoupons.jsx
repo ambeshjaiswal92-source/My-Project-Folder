@@ -428,7 +428,7 @@ function AdminCoupons() {
                       />
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label">Minimum Order Amount ($)</label>
+                      <label className="form-label">Minimum Order Amount (₹)</label>
                       <input
                         type="number"
                         className="form-control"

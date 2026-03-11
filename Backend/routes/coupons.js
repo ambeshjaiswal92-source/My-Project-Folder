@@ -177,7 +177,7 @@ router.post('/validate', async (req, res) => {
 
     if (orderTotal < coupon.minOrderAmount) {
       return res.status(400).json({ 
-        message: `Minimum order amount is $${coupon.minOrderAmount}` 
+        message: `Minimum order amount is ₹${coupon.minOrderAmount}` 
       });
     }
 
