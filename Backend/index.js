@@ -24,16 +24,17 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 
-// Connect to MongoDB
-connectDB();
-
-// Middleware
+// CORS must be the very first middleware
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Connect to MongoDB
+connectDB();
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -64,6 +65,18 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Server error', error: err.message });
 });
 
+
+// Global error handlers for debugging
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason);
+    process.exit(1);
+});
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+    console.log('CORS and API routes are set up.');
 });
