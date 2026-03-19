@@ -25,8 +25,20 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 // CORS must be the very first middleware
+const allowedOrigins = [
+    'https://my-project-folder-moder-sports-hub.onrender.com',
+    'http://localhost:5173'
+];
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+        // allow requests with no origin (like mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }));
 
