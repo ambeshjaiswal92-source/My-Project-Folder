@@ -8,23 +8,14 @@ import connectDB from './config/db.js';
 // Route imports
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
-import productRoutes from './routes/products.js';
-import orderRoutes from './routes/orders.js';
-import paymentRoutes from './routes/payment.js';
-import adminRoutes from './routes/admin.js';
-import uploadRoutes from './routes/upload.js';
-import couponRoutes from './routes/coupons.js';
 
-// Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// Setup environment
 dotenv.config();
 
+// Express app
 const app = express();
-const port = process.env.PORT || 4000;
 
-// CORS must be the very first middleware
+// CORS FIRST!
 const allowedOrigins = [
     'https://my-project-folder-moder-sports-hub.onrender.com',
     'http://localhost:5173'
@@ -34,11 +25,26 @@ app.use(cors({
     credentials: true,
 }));
 
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Connect to MongoDB
 connectDB();
+
+// Route imports
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+import productRoutes from './routes/products.js';
+import orderRoutes from './routes/orders.js';
+import paymentRoutes from './routes/payment.js';
+import adminRoutes from './routes/admin.js';
+import uploadRoutes from './routes/upload.js';
+import couponRoutes from './routes/coupons.js';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -65,10 +71,9 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('Express error handler:', err.stack);
     res.status(500).json({ message: 'Server error', error: err.message });
 });
-
 
 // Global error handlers for debugging
 process.on('unhandledRejection', (reason, promise) => {
@@ -80,7 +85,8 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
+// Start server
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
-    console.log('CORS and API routes are set up.');
 });
