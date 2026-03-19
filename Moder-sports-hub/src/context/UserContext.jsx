@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://my-project-folder-backend.onrender.com';
 
 
 export const UserContext = createContext();
