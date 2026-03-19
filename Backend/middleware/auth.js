@@ -2,6 +2,16 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 
+
+const cors = require('cors');
+app.use(cors({
+  origin: [
+    'https://my-project-folder-moder-sports-hub.onrender.com', // your frontend Render URL
+    'http://localhost:5173' // for local development (optional)
+  ],
+  credentials: true // if you use cookies/auth
+}));
+
 // Protect routes - verify token
 export const protect = async (req, res, next) => {
     let token;
