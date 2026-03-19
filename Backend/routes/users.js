@@ -7,7 +7,7 @@ const router = express.Router();
 // @route   GET /api/users
 // @desc    Get all users (admin only)
 // @access  Private/Admin
-router.get('/', protect, admin, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const users = await User.find().select('-password');
         res.json(users);
