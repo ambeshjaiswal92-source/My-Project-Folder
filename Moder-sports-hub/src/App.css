@@ -73,7 +73,7 @@
 		justify-content: flex-end;
 	}
 	.fashion-slider-image img {
-		max-height: 60px !important;
+		max-height: 150px !important;
 		width: auto !important;
 		border-radius: 6px !important;
 	}
