@@ -61,20 +61,32 @@ function Home({ onAddToCart, wishlist, onToggleWishlist }) {
     <main className="homepage-main">
       {/* Fashion Slider */}
       <section className="fashion-slider" style={{background: fashion.bg}}>
-        <div className="fashion-slider-content">
-          <span className="fashion-slider-label">{fashion.label}</span>
+        <div className="fashion-slider-content" style={{position: 'relative', zIndex: 2}}>
+          {fashion.label && (
+            <span className="fashion-slider-label">{fashion.label}</span>
+          )}
           <div className="fashion-slider-title">
             {fashion.title.split('\n').map((line, i) => (
               <div key={i}>{line}</div>
             ))}
           </div>
-          <div className="fashion-slider-btns">
-            <button className="fashion-slider-price">{fashion.price}</button>
-           
+          <div className="fashion-slider-offer-row">
+            {fashion.oldPrice && (
+              <span className="fashion-slider-old-price">{fashion.oldPrice}</span>
+            )}
+            <span className="fashion-slider-new-price">{fashion.price}</span>
           </div>
+          <button
+            className="fashion-slider-cta"
+            onClick={() => {
+              window.location.href = '/products';
+            }}
+          >
+            {fashion.buttonText || 'SHOP NOW'}
+          </button>
         </div>
         <div className="fashion-slider-image">
-          <img src={fashion.image} alt="Fashion Model" />
+          <img src={fashion.image} alt="Slider Banner" />
         </div>
         <div className="fashion-slider-nav">
           <span style={{color: '#ff2e63'}}>{fashionIndex + 1}</span>
