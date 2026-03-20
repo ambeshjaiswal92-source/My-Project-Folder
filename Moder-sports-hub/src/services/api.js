@@ -21,7 +21,7 @@ function getToken() {
 }
 
 // Get admin token from localStorage
-function getAdminToken() {
+export function getAdminToken() {
   const admin = localStorage.getItem('moder_admin_user')
   if (admin) {
     const parsed = JSON.parse(admin)

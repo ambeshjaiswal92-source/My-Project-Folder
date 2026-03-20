@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useProducts } from '../../context/ProductContext'
 import axios from 'axios'
+import { getAdminToken } from '../../services/api'
 
 function AdminProducts() {
   const { getAllProducts, addProduct, updateProduct, deleteProduct, refreshProducts } = useProducts()
@@ -372,7 +373,8 @@ function ProductModal({ product, onSave, onClose, categories }) {
     setUploadError('')
 
     try {
-      const token = localStorage.getItem('admin_token')
+      const token = getAdminToken()
+      if (!token) throw new Error('Admin not authenticated')
       const res = await axios.post('http://localhost:4001/api/upload', formDataUpload, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -381,7 +383,7 @@ function ProductModal({ product, onSave, onClose, categories }) {
       })
       setFormData({ ...formData, image: `http://localhost:4001${res.data.imageUrl}` })
     } catch (error) {
-      setUploadError(error.response?.data?.message || 'Upload failed')
+      setUploadError(error.response?.data?.message || error.message || 'Upload failed')
     } finally {
       setUploading(false)
     }
