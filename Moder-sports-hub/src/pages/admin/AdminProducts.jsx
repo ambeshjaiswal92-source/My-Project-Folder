@@ -375,13 +375,15 @@ function ProductModal({ product, onSave, onClose, categories }) {
     try {
       const token = getAdminToken()
       if (!token) throw new Error('Admin not authenticated')
-      const res = await axios.post('http://localhost:4001/api/upload', formDataUpload, {
+      // Use backend URL from env or fallback to production backend
+      const backendUrl = (import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://your-backend.onrender.com').replace(/\/$/, '');
+      const res = await axios.post(`${backendUrl}/api/upload`, formDataUpload, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
         }
       })
-      setFormData({ ...formData, image: `http://localhost:4001${res.data.imageUrl}` })
+      setFormData({ ...formData, image: `${backendUrl}${res.data.imageUrl}` })
     } catch (error) {
       setUploadError(error.response?.data?.message || error.message || 'Upload failed')
     } finally {
