@@ -4,6 +4,11 @@ const formatPrice = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}
 
 function ProductCard({ product, onAddToCart, wishlist, onToggleWishlist }) {
   const { id, name, price, originalPrice, badge, tag, image, description, category } = product
+  // Derive fallback image path (replace .avif with .jpg as a simple fallback)
+  let fallbackImage = image;
+  if (image && image.endsWith('.avif')) {
+    fallbackImage = image.replace('.avif', '.jpg');
+  }
   const isWishlisted = wishlist?.includes(id)
 
   return (
@@ -12,7 +17,10 @@ function ProductCard({ product, onAddToCart, wishlist, onToggleWishlist }) {
         {/* Image Section */}
         <div className="product-card-image-wrapper">
           {badge && <span className="product-hot-badge">{badge}</span>}
-          <img src={image} className="product-card-image" alt={name} />
+          <picture>
+            <source srcSet={image} type="image/avif" />
+            <img src={fallbackImage} className="product-card-image" alt={name} />
+          </picture>
           <button
             className={`product-wishlist-btn ${isWishlisted ? 'active' : ''}`}
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist?.(id) }}
@@ -33,10 +41,8 @@ function ProductCard({ product, onAddToCart, wishlist, onToggleWishlist }) {
         <div className="product-card-content">
           <span className="product-card-category">{category || tag || 'SPORTS'}</span>
           <h3 className="product-card-name">{name}</h3>
-          
           {/* Rating Section */}
           {/* Remove old rating section, now in overlay */}
-
           <p className="product-card-description">
             {description?.substring(0, 80) || 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, possimus nostrum!'}
           </p>

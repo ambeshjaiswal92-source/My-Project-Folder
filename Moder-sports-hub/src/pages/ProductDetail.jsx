@@ -392,12 +392,15 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
                 style={{ width: '80px', height: '80px', cursor: 'pointer' }}
                 onClick={() => setSelectedImage(product.image)}
               >
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  className="w-100 h-100" 
-                  style={{ objectFit: 'cover' }} 
-                />
+                <picture>
+                  <source srcSet={product.image} type="image/avif" />
+                  <img 
+                    src={product.image && product.image.endsWith('.avif') ? product.image.replace('.avif', '.jpg') : product.image}
+                    alt={product.name}
+                    className="w-100 h-100"
+                    style={{ objectFit: 'cover' }}
+                  />
+                </picture>
               </div>
               {/* Extra images */}
               {product.images && product.images.slice(0, 4).map((img, index) => (
@@ -407,24 +410,30 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
                   style={{ width: '80px', height: '80px', cursor: 'pointer' }}
                   onClick={() => setSelectedImage(img)}
                 >
-                  <img 
-                    src={img} 
-                    alt={`${product.name} view ${index + 2}`} 
-                    className="w-100 h-100" 
-                    style={{ objectFit: 'cover' }} 
-                  />
+                  <picture>
+                    <source srcSet={img} type="image/avif" />
+                    <img 
+                      src={img && img.endsWith('.avif') ? img.replace('.avif', '.jpg') : img}
+                      alt={`${product.name} view ${index + 2}`}
+                      className="w-100 h-100"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </picture>
                 </div>
               ))}
             </div>
             
             {/* Main Product Image */}
             <div className="product-detail-img position-relative flex-grow-1" style={{ lineHeight: 0 }}>
-              <img 
-                src={selectedImage || product.image} 
-                alt={product.name} 
-                className="img-fluid rounded-4" 
-                style={{ display: 'block', width: '100%', height: 'auto' }} 
-              />
+              <picture>
+                <source srcSet={selectedImage || product.image} type="image/avif" />
+                <img 
+                  src={(selectedImage || product.image)?.endsWith('.avif') ? (selectedImage || product.image).replace('.avif', '.jpg') : (selectedImage || product.image)}
+                  alt={product.name}
+                  className="img-fluid rounded-4"
+                  style={{ display: 'block', width: '100%', height: 'auto' }}
+                />
+              </picture>
               {discount > 0 && (
                 <span className="position-absolute top-0 start-0 m-3 badge bg-danger fs-6">
                   -{discount}%

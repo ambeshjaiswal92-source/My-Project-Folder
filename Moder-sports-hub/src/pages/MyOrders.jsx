@@ -404,12 +404,15 @@ function MyOrders({ user }) {
                               style={{ width: '80px', height: '80px' }}
                             >
                               {item.image ? (
-                                <img 
-                                  src={item.image} 
-                                  alt={item.name}
-                                  className="w-100 h-100"
-                                  style={{ objectFit: 'cover' }}
-                                />
+                                <picture>
+                                  <source srcSet={item.image} type="image/avif" />
+                                  <img 
+                                    src={item.image && item.image.endsWith('.avif') ? item.image.replace('.avif', '.jpg') : item.image}
+                                    alt={item.name}
+                                    className="w-100 h-100"
+                                    style={{ objectFit: 'cover' }}
+                                  />
+                                </picture>
                               ) : (
                                 <div className="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center">
                                   <i className="bi bi-image text-muted-custom fs-4"></i>

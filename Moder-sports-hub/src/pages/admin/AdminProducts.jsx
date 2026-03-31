@@ -207,13 +207,16 @@ function AdminProducts() {
                 <tr key={product.id} className="border-secondary">
                   <td>
                     <div className="d-flex align-items-center">
-                      <img 
-                        src={product.image} 
-                        alt={product.name}
-                        className="rounded me-3"
-                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                        onError={(e) => e.target.src = 'https://placehold.co/50x50/1a1a2e/ffffff?text=No+Img'}
-                      />
+                      <picture>
+                        <source srcSet={product.image} type="image/avif" />
+                        <img 
+                          src={product.image && product.image.endsWith('.avif') ? product.image.replace('.avif', '.jpg') : product.image}
+                          alt={product.name}
+                          className="rounded me-3"
+                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                          onError={(e) => e.target.src = 'https://placehold.co/50x50/1a1a2e/ffffff?text=No+Img'}
+                        />
+                      </picture>
                       <div>
                         <div className="text-white">{product.name}</div>
                         <div className="text-muted-custom small">{product.badge}</div>
@@ -787,13 +790,16 @@ function ProductModal({ product, onSave, onClose, categories }) {
                   <div className="d-flex flex-wrap gap-2 mt-2">
                     {formData.images.map((img, index) => (
                       <div key={index} className="position-relative">
-                        <img 
-                          src={img} 
-                          alt={`Extra ${index + 1}`} 
-                          className="rounded border border-secondary" 
-                          style={{ width: '80px', height: '80px', objectFit: 'cover' }}
-                          onError={(e) => e.target.src = 'https://placehold.co/80x80/1a1a2e/ffffff?text=Error'}
-                        />
+                        <picture>
+                          <source srcSet={img} type="image/avif" />
+                          <img 
+                            src={img && img.endsWith('.avif') ? img.replace('.avif', '.jpg') : img}
+                            alt={`Extra ${index + 1}`}
+                            className="rounded border border-secondary"
+                            style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                            onError={(e) => e.target.src = 'https://placehold.co/80x80/1a1a2e/ffffff?text=Error'}
+                          />
+                        </picture>
                         <button
                           type="button"
                           className="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center"

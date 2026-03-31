@@ -113,12 +113,15 @@ function Cart({ cart, updateQty, removeFromCart, total, appliedCoupon, onApplyCo
               <div className="d-flex align-items-center gap-3">
                 <div className="rounded overflow-hidden" style={{ width: '80px', height: '80px', flexShrink: 0, background: '#f7f7fa' }}>
                   {item.image ? (
-                    <img 
-                      src={item.image} 
-                      alt={item.name}
-                      className="w-100 h-100"
-                      style={{ objectFit: 'cover' }}
-                    />
+                    <picture>
+                      <source srcSet={item.image} type="image/avif" />
+                      <img 
+                        src={item.image && item.image.endsWith('.avif') ? item.image.replace('.avif', '.jpg') : item.image}
+                        alt={item.name}
+                        className="w-100 h-100"
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </picture>
                   ) : (
                     <div className="bg-light d-flex align-items-center justify-content-center h-100">
                       <i className="bi bi-box-seam text-secondary fs-3"></i>
