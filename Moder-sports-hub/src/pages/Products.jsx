@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import FilterSidebar from '../components/FilterSidebar'
 import { useProducts } from '../context/ProductContext'
-import { sportsCategories, productMatchesSport } from '../data/sports'
+import { userDashboardSportsCategories, productMatchesSport } from '../data/sports'
 
 function Products({ onAddToCart, wishlist, onToggleWishlist }) {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -172,7 +172,7 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
                   ></button>
                 </div>
                 <FilterSidebar
-                  sports={sportsCategories}
+                  sports={userDashboardSportsCategories}
                   categories={categories}
                   brands={brands}
                   selectedSports={selectedSports}
@@ -192,7 +192,7 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
           {/* Desktop Sidebar */}
           <div className="col-lg-3 col-xl-2 d-none d-lg-block">
             <FilterSidebar
-              sports={sportsCategories}
+              sports={userDashboardSportsCategories}
               categories={categories}
               brands={brands}
               selectedSports={selectedSports}
@@ -242,7 +242,7 @@ function Products({ onAddToCart, wishlist, onToggleWishlist }) {
             {activeFilterCount > 0 && (
               <div className="active-filters mb-3">
                 {selectedSports.map(sport => {
-                  const sportData = sportsCategories.find(s => s.slug === sport)
+                  const sportData = userDashboardSportsCategories.find(s => s.slug === sport)
                   return (
                     <span key={sport} className="active-filter-tag">
                       {sportData?.name || sport}

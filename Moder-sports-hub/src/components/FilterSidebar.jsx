@@ -16,7 +16,6 @@ function FilterSidebar({
 }) {
   const [expandedSections, setExpandedSections] = useState({
     sport: true,
-    brand: false,
     category: false,
     gender: false
   })
@@ -41,16 +40,12 @@ function FilterSidebar({
       case 'gender':
         onGenderChange(value, checked)
         break
-      case 'brand':
-        onBrandChange(value, checked)
-        break
     }
   }
 
   const hasActiveFilters = selectedSports.length > 0 || 
     selectedCategories.length > 0 || 
-    selectedGenders.length > 0 || 
-    selectedBrands.length > 0
+    selectedGenders.length > 0
 
   return (
     <div className="filter-sidebar">
@@ -82,31 +77,6 @@ function FilterSidebar({
                   onChange={(e) => handleCheckboxChange('sport', sport.slug, e.target.checked)}
                 />
                 <span className="filter-checkbox-text">{sport.name}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Brand Filter */}
-      <div className="filter-section">
-        <button 
-          className="filter-section-toggle"
-          onClick={() => toggleSection('brand')}
-        >
-          <span>Brand</span>
-          <i className={`bi ${expandedSections.brand ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
-        </button>
-        {expandedSections.brand && (
-          <div className="filter-section-content">
-            {brands.map((brand) => (
-              <label key={brand} className="filter-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={selectedBrands.includes(brand)}
-                  onChange={(e) => handleCheckboxChange('brand', brand, e.target.checked)}
-                />
-                <span className="filter-checkbox-text">{brand}</span>
               </label>
             ))}
           </div>

@@ -1,7 +1,7 @@
 import { useMemo, useCallback, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useProducts } from '../context/ProductContext'
-import { sportsCategories, productTypes } from '../data/sports'
+import { userDashboardSportsCategories, productTypes } from '../data/sports'
 
 const slugify = (str = '') => str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'category'
 
@@ -358,7 +358,7 @@ function Navbar({ cartCount = 0, user, onLogout }) {
               <Link to="/sports" className="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none" onClick={closeSidebar}>
                 🏆 All Sports
               </Link>
-              {sportsCategories.slice(0, 8).map((sport) => (
+              {userDashboardSportsCategories.slice(0, 8).map((sport) => (
                 <Link 
                   key={sport.slug}
                   to={`/sports/${sport.slug}`} 

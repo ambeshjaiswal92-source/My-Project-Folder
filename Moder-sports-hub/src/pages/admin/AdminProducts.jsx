@@ -3,6 +3,64 @@ import { useProducts } from '../../context/ProductContext'
 import axios from 'axios'
 import { getAdminToken } from '../../services/api'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4001/api'
+const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '')
+const ADMIN_IMAGE_FALLBACK = 'https://placehold.co/50x50/1a1a2e/ffffff?text=No+Img'
+const ADMIN_EXTRA_IMAGE_FALLBACK = 'https://placehold.co/80x80/1a1a2e/ffffff?text=No+Img'
+const SPORTS_DEMO_COUNT = 50
+
+const SPORTS_OPTIONS = ['Running', 'Football', 'Basketball', 'Cricket', 'Tennis', 'Gym', 'Swimming', 'Cycling', 'Yoga', 'Badminton']
+const CATEGORY_OPTIONS = ['Performance Wear', 'Footwear', 'Equipment', 'Accessories']
+const BADGE_OPTIONS = ['New', 'Popular', 'Sale']
+const GENDER_OPTIONS = ['Unisex', 'Men', 'Women']
+const NAME_SUFFIX_OPTIONS = ['Pro Kit', 'Elite Series', 'Match Edition', 'Training Gear', 'Performance Line']
+const SPORT_IMAGE_MAP = {
+  Running: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=640&q=80',
+  Football: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=640&q=80',
+  Basketball: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=640&q=80',
+  Cricket: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=640&q=80',
+  Tennis: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=640&q=80',
+  Gym: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=640&q=80',
+  Swimming: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=640&q=80',
+  Cycling: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=640&q=80',
+  Yoga: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=640&q=80',
+  Badminton: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=640&q=80',
+}
+
+const pickByIndex = (list, index) => list[index % list.length]
+
+const getDemoSizes = (category) => {
+  if (category === 'Footwear') return ['6', '7', '8', '9', '10', '11']
+  if (category === 'Equipment' || category === 'Accessories') return ['One Size']
+  return ['S', 'M', 'L', 'XL']
+}
+
+const buildSportsDemoProduct = (index) => {
+  const sport = pickByIndex(SPORTS_OPTIONS, index)
+  const category = pickByIndex(CATEGORY_OPTIONS, index)
+  const badge = pickByIndex(BADGE_OPTIONS, index)
+  const gender = pickByIndex(GENDER_OPTIONS, index)
+  const nameSuffix = pickByIndex(NAME_SUFFIX_OPTIONS, index)
+  const price = 799 + (index % 10) * 250
+
+  return {
+    name: `${sport} ${nameSuffix} ${index + 1}`,
+    price,
+    originalPrice: Math.round(price * 1.35),
+    stock: 35 + (index % 60),
+    category,
+    sport,
+    badge,
+    tag: 'Sports',
+    image: SPORT_IMAGE_MAP[sport],
+    description: `Demo sports product ${index + 1} for ${sport}. Added from Admin bulk generator for catalog testing.`,
+    sizes: getDemoSizes(category),
+    colors: ['Black', 'White', 'Blue'],
+    gender,
+    status: 'Active',
+  }
+}
+
 function AdminProducts() {
   const { getAllProducts, addProduct, updateProduct, deleteProduct, refreshProducts } = useProducts()
   const products = getAllProducts()
@@ -14,6 +72,7 @@ function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState(null)
   const [filterSport, setFilterSport] = useState('All')
   const [filterStatus, setFilterStatus] = useState('All')
+  const [bulkAddingSports, setBulkAddingSports] = useState(false)
 
   // Status types for filter dropdown
   const statusList = useMemo(() => {
@@ -82,6 +141,40 @@ function AdminProducts() {
       case 'low-stock': return 'bg-warning text-dark'
       case 'out-of-stock': return 'bg-danger'
       default: return 'bg-secondary'
+    }
+  }
+
+  const handleAddSportsDemoProducts = async () => {
+    const shouldContinue = confirm(`This will create ${SPORTS_DEMO_COUNT} demo products with Sports tagging. Continue?`)
+    if (!shouldContinue) return
+
+    setBulkAddingSports(true)
+
+    let created = 0
+    let failed = 0
+
+    try {
+      for (let i = 0; i < SPORTS_DEMO_COUNT; i += 1) {
+        const payload = buildSportsDemoProduct(i)
+        try {
+          await addProduct(payload)
+          created += 1
+        } catch (error) {
+          failed += 1
+          console.error(`Failed creating demo sports product ${i + 1}:`, error.message)
+        }
+      }
+
+      await refreshProducts()
+      setFilterSport('All')
+
+      if (failed === 0) {
+        alert(`Successfully created ${created} Sports demo products.`)
+      } else {
+        alert(`Created ${created} Sports demo products. ${failed} failed.`)
+      }
+    } finally {
+      setBulkAddingSports(false)
     }
   }
 
@@ -207,16 +300,15 @@ function AdminProducts() {
                 <tr key={product.id} className="border-secondary">
                   <td>
                     <div className="d-flex align-items-center">
-                      <picture>
-                        <source srcSet={product.image} type="image/avif" />
-                        <img 
-                          src={product.image && product.image.endsWith('.avif') ? product.image.replace('.avif', '.jpg') : product.image}
-                          alt={product.name}
-                          className="rounded me-3"
-                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                          onError={(e) => e.target.src = 'https://placehold.co/50x50/1a1a2e/ffffff?text=No+Img'}
-                        />
-                      </picture>
+                      <img 
+                        src={product.image || ADMIN_IMAGE_FALLBACK}
+                        alt={product.name}
+                        className="rounded me-3"
+                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.currentTarget.src = ADMIN_IMAGE_FALLBACK
+                        }}
+                      />
                       <div>
                         <div className="text-white">{product.name}</div>
                         <div className="text-muted-custom small">{product.badge}</div>
@@ -378,15 +470,13 @@ function ProductModal({ product, onSave, onClose, categories }) {
     try {
       const token = getAdminToken()
       if (!token) throw new Error('Admin not authenticated')
-      // Use backend URL from env or fallback to production backend
-      const backendUrl = (import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://your-backend.onrender.com').replace(/\/$/, '');
-      const res = await axios.post(`${backendUrl}/api/upload`, formDataUpload, {
+      const res = await axios.post(`${BACKEND_BASE_URL}/api/upload`, formDataUpload, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
         }
       })
-      setFormData({ ...formData, image: `${backendUrl}${res.data.imageUrl}` })
+      setFormData({ ...formData, image: `${BACKEND_BASE_URL}${res.data.imageUrl}` })
     } catch (error) {
       setUploadError(error.response?.data?.message || error.message || 'Upload failed')
     } finally {
@@ -411,14 +501,16 @@ function ProductModal({ product, onSave, onClose, categories }) {
     setUploadExtraError('')
 
     try {
-      const token = localStorage.getItem('admin_token')
-      const res = await axios.post('http://localhost:4001/api/upload', formDataUpload, {
+      const token = getAdminToken()
+      if (!token) throw new Error('Admin not authenticated')
+
+      const res = await axios.post(`${BACKEND_BASE_URL}/api/upload`, formDataUpload, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
         }
       })
-      const newImageUrl = `http://localhost:4001${res.data.imageUrl}`
+      const newImageUrl = `${BACKEND_BASE_URL}${res.data.imageUrl}`
       setFormData({ ...formData, images: [...formData.images, newImageUrl] })
     } catch (error) {
       setUploadExtraError(error.response?.data?.message || 'Upload failed')
@@ -790,16 +882,15 @@ function ProductModal({ product, onSave, onClose, categories }) {
                   <div className="d-flex flex-wrap gap-2 mt-2">
                     {formData.images.map((img, index) => (
                       <div key={index} className="position-relative">
-                        <picture>
-                          <source srcSet={img} type="image/avif" />
-                          <img 
-                            src={img && img.endsWith('.avif') ? img.replace('.avif', '.jpg') : img}
-                            alt={`Extra ${index + 1}`}
-                            className="rounded border border-secondary"
-                            style={{ width: '80px', height: '80px', objectFit: 'cover' }}
-                            onError={(e) => e.target.src = 'https://placehold.co/80x80/1a1a2e/ffffff?text=Error'}
-                          />
-                        </picture>
+                        <img 
+                          src={img || ADMIN_EXTRA_IMAGE_FALLBACK}
+                          alt={`Extra ${index + 1}`}
+                          className="rounded border border-secondary"
+                          style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                          onError={(e) => {
+                            e.currentTarget.src = ADMIN_EXTRA_IMAGE_FALLBACK
+                          }}
+                        />
                         <button
                           type="button"
                           className="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center"

@@ -226,7 +226,7 @@ function MyOrders({ user }) {
                       <i className="bi bi-box-seam text-white fs-5"></i>
                     </div>
                     <div>
-                      <h6 className="text-white mb-1">{order.id}</h6>
+                      <h6 className="mb-1" style={{ color: '#000' }}>{order.id}</h6>
                       <small className="text-muted-custom">
                         <i className="bi bi-calendar3 me-1"></i> {order.date}
                         <span className="mx-2">•</span>
@@ -377,7 +377,7 @@ function MyOrders({ user }) {
                               <i className={`bi ${step.icon} ${step.completed ? 'text-white' : 'text-muted-custom'}`}></i>
                             </div>
                             <small className={`d-block ${step.completed ? 'text-white' : 'text-muted-custom'}`} style={{ fontSize: '11px' }}>
-                              {step.name}
+                              <span style={{ color: '#000' }}>{step.name}</span>
                             </small>
                           </div>
                         ))}
@@ -389,7 +389,7 @@ function MyOrders({ user }) {
                     <div className="p-3">
                       <h6 className="text-white mb-3">
                         <i className="bi bi-bag me-2 text-warning"></i>
-                        Order Items
+                        <span style={{ color: '#000' }}>Order Items</span>
                       </h6>
                       <div className="d-flex flex-column gap-3">
                         {order.items?.map((item, idx) => (
@@ -422,7 +422,7 @@ function MyOrders({ user }) {
                             
                             {/* Product Details */}
                             <div className="flex-grow-1">
-                              <h6 className="text-white mb-1">{item.name}</h6>
+                              <h6 className="mb-1" style={{ color: '#000' }}>{item.name}</h6>
                               <div className="d-flex flex-wrap gap-2 mb-2">
                                 {item.selectedSize && (
                                   <span className="badge bg-secondary">Size: {item.selectedSize}</span>
@@ -430,14 +430,14 @@ function MyOrders({ user }) {
                                 {item.selectedColor && (
                                   <span className="badge bg-secondary">Color: {item.selectedColor}</span>
                                 )}
-                                <span className="badge bg-dark">Qty: {item.qty}</span>
+                                <span className="badge bg-dark" style={{ color: '#000' }}>Qty: {item.qty}</span>
                               </div>
                               <div className="text-muted-custom small">
-                                <span className="text-warning">₹{Number(item.price || 0).toLocaleString('en-IN')}</span>
-                                <span className="mx-1">×</span>
-                                <span>{item.qty}</span>
-                                <span className="mx-2">=</span>
-                                <span className="text-white fw-semibold">₹{Number((item.price || 0) * item.qty).toLocaleString('en-IN')}</span>
+                                <span style={{ color: '#000' }}>₹{Number(item.price || 0).toLocaleString('en-IN')}</span>
+                                <span className="mx-1" style={{ color: '#000' }}>×</span>
+                                <span style={{ color: '#000' }}>{item.qty}</span>
+                                <span className="mx-2" style={{ color: '#000' }}>=</span>
+                                <span className="fw-semibold" style={{ color: '#000' }}>₹{Number((item.price || 0) * item.qty).toLocaleString('en-IN')}</span>
                               </div>
                             </div>
 
@@ -460,7 +460,7 @@ function MyOrders({ user }) {
                           <div className="col-md-6">
                             <h6 className="text-white mb-2">
                               <i className="bi bi-geo-alt me-2 text-warning"></i>
-                              Delivery Address
+                              <span style={{ color: '#000' }}>Delivery Address</span>
                             </h6>
                             <p className="text-muted-custom small mb-0">
                               {order.shippingAddress || 'Address not available'}

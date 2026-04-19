@@ -1,14 +1,19 @@
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const formatPrice = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`
+const IMAGE_FALLBACK_URL = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=640&q=80'
 
 function ProductCard({ product, onAddToCart, wishlist, onToggleWishlist }) {
   const { id, name, price, originalPrice, badge, tag, image, description, category } = product
-  // Derive fallback image path (replace .avif with .jpg as a simple fallback)
-  let fallbackImage = image;
-  if (image && image.endsWith('.avif')) {
-    fallbackImage = image.replace('.avif', '.jpg');
-  }
+  const resolvedImage = image || IMAGE_FALLBACK_URL
+  const isAvifImage = useMemo(() => /\.avif(?:\?|#|$)/i.test(resolvedImage), [resolvedImage])
+  const [imgSrc, setImgSrc] = useState(resolvedImage)
+
+  useEffect(() => {
+    setImgSrc(resolvedImage)
+  }, [resolvedImage])
+
   const isWishlisted = wishlist?.includes(id)
 
   return (
@@ -18,8 +23,19 @@ function ProductCard({ product, onAddToCart, wishlist, onToggleWishlist }) {
         <div className="product-card-image-wrapper">
           {badge && <span className="product-hot-badge">{badge}</span>}
           <picture>
-            <source srcSet={image} type="image/avif" />
-            <img src={fallbackImage} className="product-card-image" alt={name} />
+            {isAvifImage && <source srcSet={resolvedImage} type="image/avif" />}
+            <img
+              src={imgSrc}
+              className="product-card-image"
+              alt={name}
+              onError={(e) => {
+                if (imgSrc !== IMAGE_FALLBACK_URL) {
+                  setImgSrc(IMAGE_FALLBACK_URL)
+                } else {
+                  e.currentTarget.onerror = null
+                }
+              }}
+            />
           </picture>
           <button
             className={`product-wishlist-btn ${isWishlisted ? 'active' : ''}`}

@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard'
 import Swal from 'sweetalert2'
 
 const formatPrice = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`
+const IMAGE_FALLBACK_URL = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=640&q=80'
 
 // Sample reviews data (in real app, this would come from backend)
 const getInitialReviews = (productId) => {
@@ -393,12 +394,15 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
                 onClick={() => setSelectedImage(product.image)}
               >
                 <picture>
-                  <source srcSet={product.image} type="image/avif" />
+                  {/\.avif(?:\?|#|$)/i.test(product.image || '') && <source srcSet={product.image} type="image/avif" />}
                   <img 
-                    src={product.image && product.image.endsWith('.avif') ? product.image.replace('.avif', '.jpg') : product.image}
+                    src={product.image || IMAGE_FALLBACK_URL}
                     alt={product.name}
                     className="w-100 h-100"
                     style={{ objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.currentTarget.src = IMAGE_FALLBACK_URL
+                    }}
                   />
                 </picture>
               </div>
@@ -411,12 +415,15 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
                   onClick={() => setSelectedImage(img)}
                 >
                   <picture>
-                    <source srcSet={img} type="image/avif" />
+                    {/\.avif(?:\?|#|$)/i.test(img || '') && <source srcSet={img} type="image/avif" />}
                     <img 
-                      src={img && img.endsWith('.avif') ? img.replace('.avif', '.jpg') : img}
+                      src={img || IMAGE_FALLBACK_URL}
                       alt={`${product.name} view ${index + 2}`}
                       className="w-100 h-100"
                       style={{ objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.currentTarget.src = IMAGE_FALLBACK_URL
+                      }}
                     />
                   </picture>
                 </div>
@@ -426,12 +433,15 @@ function ProductDetail({ onAddToCart, wishlist, onToggleWishlist, user }) {
             {/* Main Product Image */}
             <div className="product-detail-img position-relative flex-grow-1" style={{ lineHeight: 0 }}>
               <picture>
-                <source srcSet={selectedImage || product.image} type="image/avif" />
+                {/\.avif(?:\?|#|$)/i.test(selectedImage || product.image || '') && <source srcSet={selectedImage || product.image} type="image/avif" />}
                 <img 
-                  src={(selectedImage || product.image)?.endsWith('.avif') ? (selectedImage || product.image).replace('.avif', '.jpg') : (selectedImage || product.image)}
+                  src={selectedImage || product.image || IMAGE_FALLBACK_URL}
                   alt={product.name}
                   className="img-fluid rounded-4"
                   style={{ display: 'block', width: '100%', height: 'auto' }}
+                  onError={(e) => {
+                    e.currentTarget.src = IMAGE_FALLBACK_URL
+                  }}
                 />
               </picture>
               {discount > 0 && (

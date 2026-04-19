@@ -36,6 +36,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import ProductCard from '../components/ProductCard'
 import { useProducts } from '../context/ProductContext'
+import { userDashboardSportsCategories } from '../data/sports'
 
 // Default hero banner slides (fallback) - matching homepage theme colors
 
@@ -56,6 +57,7 @@ function Home({ onAddToCart, wishlist, onToggleWishlist }) {
   // Products state
   const { getActiveProducts } = useProducts();
   const products = getActiveProducts ? getActiveProducts() : [];
+  const featuredCategories = userDashboardSportsCategories.slice(0, 6)
 
   return (
     <main className="homepage-main">
@@ -171,6 +173,49 @@ function Home({ onAddToCart, wishlist, onToggleWishlist }) {
                 </div>
               ))
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Shop by Category */}
+      <section className="py-4 py-md-5">
+        <div className="container-fluid px-2 px-md-5">
+          <div className="d-flex justify-content-between align-items-center mb-3 mb-md-4">
+            <div className="d-flex flex-column">
+              <span className="badge badge-primary mb-1" style={{ fontSize: 'clamp(0.55rem, 1.5vw, 0.85rem)', width: 'fit-content', color: '#111' }}>Categories</span>
+              <h2 className="mb-0" style={{ fontSize: 'clamp(1.1rem, 4vw, 1.75rem)', color: '#111' }}>Shop by Category</h2>
+            </div>
+            <Link to="/sports" className="btn btn-primary btn-sm" style={{ fontSize: 'clamp(0.7rem, 2vw, 0.875rem)', padding: 'clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 1rem)' }}>
+              View All
+            </Link>
+          </div>
+
+          <div className="row g-3 g-md-4">
+            {featuredCategories.map((category) => (
+              <div key={category.id} className="col-6 col-md-4 col-xl-2">
+                <Link
+                  to={`/sports/${category.slug}`}
+                  className="text-decoration-none d-block h-100"
+                >
+                  <div
+                    className="card border-0 h-100 overflow-hidden shadow-sm"
+                    style={{ borderRadius: '14px', background: '#f7f8fb' }}
+                  >
+                    <div style={{ height: '150px', overflow: 'hidden' }}>
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-100 h-100"
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
+                    <div className="p-3 text-center" style={{ color: '#111' }}>
+                      <div className="fw-semibold" style={{ fontSize: '0.95rem' }}>{category.name}</div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>

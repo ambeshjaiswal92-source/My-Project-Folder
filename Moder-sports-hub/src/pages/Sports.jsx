@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { useProducts } from '../context/ProductContext'
-import { sportsCategories, productMatchesSport, getSportBySlug } from '../data/sports'
+import { userDashboardSportsCategories, productMatchesSport, getSportBySlug } from '../data/sports'
 
 function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
   const { sportSlug } = useParams()
@@ -102,7 +102,7 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
               msOverflowStyle: 'none',
             }}
           >
-            {sportsCategories.map((sport) => (
+            {userDashboardSportsCategories.map((sport) => (
               <Link
                 key={sport.slug}
                 to={`/sports/${sport.slug}`}
@@ -182,7 +182,7 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
             <i className="bi bi-trophy me-1"></i> Switch Sport
           </label>
           <div className="sports-switcher-bar">
-            {sportsCategories.map((sport) => (
+            {userDashboardSportsCategories.map((sport) => (
               <Link
                 key={sport.slug}
                 to={`/sports/${sport.slug}`}
@@ -232,40 +232,18 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
           </div>
         </div>
 
-        {/* Results Count & Slider Controls */}
-        <div className="d-flex justify-content-between align-items-center mb-3">
+        {/* Results Count */}
+        <div className="mb-3">
           <p className="text-muted-custom mb-0">
             Showing <span className="text-white fw-semibold">{sortedProducts.length}</span> {currentSport?.name} products
           </p>
-          <div className="d-flex gap-2 align-items-center">
-            <button 
-              className="btn btn-outline-light btn-sm rounded-circle"
-              onClick={() => {
-                const slider = document.getElementById('sportsProductSlider')
-                if (slider) slider.scrollBy({ left: -320, behavior: 'smooth' })
-              }}
-              style={{ width: '40px', height: '40px' }}
-            >
-              <i className="bi bi-chevron-left"></i>
-            </button>
-            <button 
-              className="btn btn-outline-light btn-sm rounded-circle"
-              onClick={() => {
-                const slider = document.getElementById('sportsProductSlider')
-                if (slider) slider.scrollBy({ left: 320, behavior: 'smooth' })
-              }}
-              style={{ width: '40px', height: '40px' }}
-            >
-              <i className="bi bi-chevron-right"></i>
-            </button>
-          </div>
         </div>
 
-        {/* Products Slider */}
+        {/* Products Grid */}
         {sortedProducts.length === 0 ? (
           <div className="text-center py-5">
-            <div className="display-1 mb-3">😕</div>
-            <h4 className="text-white mb-2">No products found</h4>
+            <div className="display-1 mb-3"></div>
+            <h4 className="text-black mb-2">No products found</h4>
             <p className="text-muted-custom mb-4">
               We couldn't find any {currentSport?.name} products matching your filters.
             </p>
@@ -274,24 +252,9 @@ function Sports({ onAddToCart, wishlist, onToggleWishlist }) {
             </button>
           </div>
         ) : (
-          <div 
-            id="sportsProductSlider"
-            className="d-flex gap-3 overflow-auto pb-3"
-            style={{ 
-              scrollSnapType: 'x mandatory',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-            }}
-          >
+          <div className="row g-3">
             {sortedProducts.map((product) => (
-              <div 
-                key={product.id} 
-                style={{ 
-                  minWidth: '280px', 
-                  maxWidth: '280px',
-                  scrollSnapAlign: 'start'
-                }}
-              >
+              <div key={product.id} className="col-12 col-sm-6 col-lg-4 col-xl-3">
                 <ProductCard
                   product={product}
                   onAddToCart={onAddToCart}

@@ -113,7 +113,7 @@ function Support() {
       <div className="container">
         <div className="mb-5 text-center">
           <span className="badge badge-primary mb-2">Support Center</span>
-          <h1 className="text-white mb-3">Need help? We have you covered.</h1>
+          <h1 className="mb-3" style={{ color: '#000' }}>Need help? We have you covered.</h1>
           <p className="text-muted-custom mb-0">
             Find answers for sizing, returns, and common questions, or reach out to our team directly.
           </p>
@@ -140,6 +140,136 @@ function Support() {
               >
                 <i className="bi bi-chat-dots me-2"></i>Chat with us
               </button>
+                    {/* Chat Widget (opens on button click) */}
+                    {chatOpen && (
+                      <div 
+                        className="position-fixed shadow-lg"
+                        style={{ 
+                          bottom: '20px', 
+                          right: '20px', 
+                          width: '380px', 
+                          maxWidth: 'calc(100vw - 40px)',
+                          height: '500px',
+                          maxHeight: 'calc(100vh - 100px)',
+                          zIndex: 1050,
+                          borderRadius: '16px',
+                          overflow: 'hidden',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          background: '#1a1a2e'
+                        }}
+                      >
+                        {/* Chat Header */}
+                        <div 
+                          className="d-flex align-items-center justify-content-between p-3"
+                          style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+                        >
+                          <div className="d-flex align-items-center gap-3">
+                            <div 
+                              className="rounded-circle d-flex align-items-center justify-content-center"
+                              style={{ width: '45px', height: '45px', background: 'rgba(255,255,255,0.2)' }}
+                            >
+                              <i className="bi bi-headset text-white fs-4"></i>
+                            </div>
+                            <div>
+                              <h6 className="text-white mb-0 fw-semibold">Moder Support</h6>
+                              <small className="text-white-50">
+                                <span className="bg-success rounded-circle d-inline-block me-1" style={{ width: '8px', height: '8px' }}></span>
+                                Online
+                              </small>
+                            </div>
+                          </div>
+                          <button 
+                            className="btn btn-link text-white p-0"
+                            onClick={() => setChatOpen(false)}
+                          >
+                            <i className="bi bi-x-lg fs-5"></i>
+                          </button>
+                        </div>
+
+                        {/* Chat Messages */}
+                        <div 
+                          className="flex-grow-1 p-3 overflow-auto"
+                          style={{ background: '#16213e' }}
+                        >
+                          {messages.map((msg) => (
+                            <div 
+                              key={msg.id}
+                              className={`d-flex mb-3 ${msg.sender === 'user' ? 'justify-content-end' : 'justify-content-start'}`}
+                            >
+                              {msg.sender === 'bot' && (
+                                <div 
+                                  className="rounded-circle d-flex align-items-center justify-content-center me-2 flex-shrink-0"
+                                  style={{ width: '32px', height: '32px', background: '#667eea' }}
+                                >
+                                  <i className="bi bi-robot text-white small"></i>
+                                </div>
+                              )}
+                              <div 
+                                className={`p-3 ${msg.sender === 'user' ? 'text-white' : 'text-white'}`}
+                                style={{ 
+                                  maxWidth: '80%',
+                                  borderRadius: msg.sender === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                                  background: msg.sender === 'user' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#1f2b47',
+                                  whiteSpace: 'pre-line'
+                                }}
+                              >
+                                <p className="mb-1 small">{msg.text}</p>
+                                <small className="text-white-50" style={{ fontSize: '10px' }}>{formatTime(msg.time)}</small>
+                              </div>
+                            </div>
+                          ))}
+                          {isTyping && (
+                            <div className="d-flex justify-content-start mb-3">
+                              <div 
+                                className="rounded-circle d-flex align-items-center justify-content-center me-2"
+                                style={{ width: '32px', height: '32px', background: '#667eea' }}
+                              >
+                                <i className="bi bi-robot text-white small"></i>
+                              </div>
+                              <div className="p-3" style={{ background: '#1f2b47', borderRadius: '16px 16px 16px 4px' }}>
+                                <div className="d-flex gap-1">
+                                  <span className="bg-secondary rounded-circle" style={{ width: '8px', height: '8px', animation: 'pulse 1s infinite' }}></span>
+                                  <span className="bg-secondary rounded-circle" style={{ width: '8px', height: '8px', animation: 'pulse 1s infinite 0.2s' }}></span>
+                                  <span className="bg-secondary rounded-circle" style={{ width: '8px', height: '8px', animation: 'pulse 1s infinite 0.4s' }}></span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Quick Replies */}
+                        <div className="px-3 py-2" style={{ background: '#1a1a2e' }}>
+                          <div className="d-flex gap-2 flex-wrap">
+                            {quickReplies.map((reply) => (
+                              <button
+                                key={reply}
+                                className="btn btn-sm btn-outline-info"
+                                onClick={() => handleQuickReply(reply)}
+                              >
+                                {reply}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Chat Input */}
+                        <form className="d-flex p-3 border-top border-secondary bg-dark" onSubmit={handleSendMessage}>
+                          <input
+                            type="text"
+                            className="form-control me-2 bg-dark text-white border-0"
+                            placeholder="Type your message..."
+                            value={inputText}
+                            onChange={(e) => setInputText(e.target.value)}
+                            autoFocus
+                          />
+                          <button className="btn btn-info" type="submit" disabled={!inputText.trim()}>
+                            <i className="bi bi-send"></i>
+                          </button>
+                        </form>
+                      </div>
+                    )}
             </div>
           </div>
 
@@ -236,164 +366,8 @@ function Support() {
             </div>
           </div>
         </div>
-        {/* Chat Widget */}
-        {chatOpen && (
-          <div 
-            className="position-fixed shadow-lg"
-            style={{ 
-              bottom: '20px', 
-              right: '20px', 
-              width: '380px', 
-              maxWidth: 'calc(100vw - 40px)',
-              height: '500px',
-              maxHeight: 'calc(100vh - 100px)',
-              zIndex: 1050,
-              borderRadius: '16px',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              background: '#1a1a2e'
-            }}
-          >
-            {/* Chat Header */}
-            <div 
-              className="d-flex align-items-center justify-content-between p-3"
-              style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-            >
-              <div className="d-flex align-items-center gap-3">
-                <div 
-                  className="rounded-circle d-flex align-items-center justify-content-center"
-                  style={{ width: '45px', height: '45px', background: 'rgba(255,255,255,0.2)' }}
-                >
-                  <i className="bi bi-headset text-white fs-4"></i>
-                </div>
-                <div>
-                  <h6 className="text-white mb-0 fw-semibold">Moder Support</h6>
-                  <small className="text-white-50">
-                    <span className="bg-success rounded-circle d-inline-block me-1" style={{ width: '8px', height: '8px' }}></span>
-                    Online
-                  </small>
-                </div>
-              </div>
-              <button 
-                className="btn btn-link text-white p-0"
-                onClick={() => setChatOpen(false)}
-              >
-                <i className="bi bi-x-lg fs-5"></i>
-              </button>
-            </div>
-
-            {/* Chat Messages */}
-            <div 
-              className="flex-grow-1 p-3 overflow-auto"
-              style={{ background: '#16213e' }}
-            >
-              {messages.map((msg) => (
-                <div 
-                  key={msg.id}
-                  className={`d-flex mb-3 ${msg.sender === 'user' ? 'justify-content-end' : 'justify-content-start'}`}
-                >
-                  {msg.sender === 'bot' && (
-                    <div 
-                      className="rounded-circle d-flex align-items-center justify-content-center me-2 flex-shrink-0"
-                      style={{ width: '32px', height: '32px', background: '#667eea' }}
-                    >
-                      <i className="bi bi-robot text-white small"></i>
-                    </div>
-                  )}
-                  <div 
-                    className={`p-3 ${msg.sender === 'user' ? 'text-white' : 'text-white'}`}
-                    style={{ 
-                      maxWidth: '80%',
-                      borderRadius: msg.sender === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      background: msg.sender === 'user' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#1f2b47',
-                      whiteSpace: 'pre-line'
-                    }}
-                  >
-                    <p className="mb-1 small">{msg.text}</p>
-                    <small className="text-white-50" style={{ fontSize: '10px' }}>{formatTime(msg.time)}</small>
-                  </div>
-                </div>
-              ))}
-              {isTyping && (
-                <div className="d-flex justify-content-start mb-3">
-                  <div 
-                    className="rounded-circle d-flex align-items-center justify-content-center me-2"
-                    style={{ width: '32px', height: '32px', background: '#667eea' }}
-                  >
-                    <i className="bi bi-robot text-white small"></i>
-                  </div>
-                  <div className="p-3" style={{ background: '#1f2b47', borderRadius: '16px 16px 16px 4px' }}>
-                    <div className="d-flex gap-1">
-                      <span className="bg-secondary rounded-circle" style={{ width: '8px', height: '8px', animation: 'pulse 1s infinite' }}></span>
-                      <span className="bg-secondary rounded-circle" style={{ width: '8px', height: '8px', animation: 'pulse 1s infinite 0.2s' }}></span>
-                      <span className="bg-secondary rounded-circle" style={{ width: '8px', height: '8px', animation: 'pulse 1s infinite 0.4s' }}></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Quick Replies */}
-            <div className="px-3 py-2" style={{ background: '#1a1a2e' }}>
-              <div className="d-flex gap-2 flex-wrap">
-                {quickReplies.map((reply) => (
-                  <button
-                    key={reply}
-                    className="btn btn-sm btn-outline-light rounded-pill"
-                    onClick={() => handleQuickReply(reply)}
-                    style={{ fontSize: '12px' }}
-                  >
-                    {reply}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Chat Input */}
-            <form onSubmit={handleSendMessage} className="p-3 border-top border-secondary" style={{ background: '#1a1a2e' }}>
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control bg-dark border-secondary text-white"
-                  placeholder="Type your message..."
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  style={{ borderRadius: '20px 0 0 20px' }}
-                />
-                <button 
-                  type="submit" 
-                  className="btn btn-primary px-4"
-                  style={{ borderRadius: '0 20px 20px 0' }}
-                  disabled={!inputText.trim()}
-                >
-                  <i className="bi bi-send-fill"></i>
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Floating Chat Button (when chat is closed) */}
-        {!chatOpen && (
-          <button
-            className="btn btn-primary position-fixed shadow-lg d-flex align-items-center justify-content-center"
-            style={{ 
-              bottom: '20px', 
-              right: '20px', 
-              width: '60px', 
-              height: '60px', 
-              borderRadius: '50%',
-              zIndex: 1050,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              border: 'none'
-            }}
-            onClick={() => setChatOpen(true)}
-          >
-            <i className="bi bi-chat-dots-fill fs-4"></i>
-          </button>
-        )}      </div>
+        {/* Chat widget and floating button removed. Chat is now only accessible via the Support page content. */}
+      </div>
     </main>
   )
 }

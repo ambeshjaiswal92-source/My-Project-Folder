@@ -9,6 +9,8 @@ const STORAGE_LOCK_KEY = 'moder_products_locked'
 const STORAGE_RANDOM_VERSION_KEY = 'moder_products_random_version'
 const DATA_VERSION = 'v6-no-default-catalog'
 const RANDOM_DATA_VERSION = 'r6-no-default-catalog-2026-01-24'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4001/api'
+const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '')
 
 const placeholders = [
   'https://images.unsplash.com/photo-1528701800489-20be9f964f9f',
@@ -235,6 +237,28 @@ const stripSeedProducts = (list) =>
 
 const randomFrom = (list) => list[Math.floor(Math.random() * list.length)]
 
+const normalizeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return ''
+
+  if (/^(https?:)?\/\//i.test(url) || url.startsWith('data:') || url.startsWith('blob:')) {
+    // If localhost image URLs are saved in DB, rewrite them to current backend base URL.
+    if (/^https?:\/\/localhost(?::\d+)?\/uploads\//i.test(url)) {
+      return `${BACKEND_BASE_URL}${url.replace(/^https?:\/\/localhost(?::\d+)?/i, '')}`
+    }
+    return url
+  }
+
+  if (url.startsWith('/uploads/')) {
+    return `${BACKEND_BASE_URL}${url}`
+  }
+
+  if (url.startsWith('uploads/')) {
+    return `${BACKEND_BASE_URL}/${url}`
+  }
+
+  return url
+}
+
 // Size options by category type
 const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 const SHOE_SIZES = ['6', '7', '8', '9', '10', '11', '12']
@@ -272,7 +296,7 @@ const getSizesForCategory = (category, productName = '') => {
 }
 
 const normalizeProduct = (product, idx = 0) => {
-  const img = product.image || `${placeholders[idx % placeholders.length]}?auto=format&fit=crop&w=640&q=80`
+  const img = normalizeImageUrl(product.image) || `${placeholders[idx % placeholders.length]}?auto=format&fit=crop&w=640&q=80`
   const status = product.status || 'Active'
   const price = Number(product.price ?? 50)
   const stock = Number.isFinite(product.stock) ? product.stock : 25
@@ -296,6 +320,7 @@ const normalizeProduct = (product, idx = 0) => {
     price,
     stock,
     image: img,
+    images: Array.isArray(product.images) ? product.images.map((item) => normalizeImageUrl(item)) : [],
     sizes,
     colors,
     gender: product.gender || 'Unisex',
